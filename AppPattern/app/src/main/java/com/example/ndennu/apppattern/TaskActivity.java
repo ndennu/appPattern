@@ -1,6 +1,5 @@
 package com.example.ndennu.apppattern;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,29 +17,29 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class TaskActivity extends AppCompatActivity {
 
-    @BindView(R.id.recycler_project) RecyclerView recyclerProject;
+    @BindView(R.id.recycler_task) RecyclerView recyclerTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_task);
         ButterKnife.bind(this);
-        recyclerProject.setLayoutManager(new LinearLayoutManager(this));
+        recyclerTask.setLayoutManager(new LinearLayoutManager(this));
 
-        List<Project> projects = new ArrayList<>();
-        projects.add(new Project());
-        projects.add(new Project());
+        List<Task> tasks = new ArrayList<>();
+        tasks.add(new Task());
+        tasks.add(new Task());
 
-        ProjectAdapter projectAdapter = new ProjectAdapter(projects);
+        TaskAdapter projectAdapter = new TaskAdapter(tasks);
 
-        projectAdapter.setListener(new ProjectAdapter.Listener() {
+        projectAdapter.setListener(new TaskAdapter.Listener() {
             @Override
-            public void onGenreClick(Project project) {
-                startActivity(new Intent(MainActivity.this, TaskActivity.class));
+            public void onGenreClick(Task task) {
+                Log.i("azeyuiop", "qsdfhklm");
             }
         });
-        recyclerProject.setAdapter(projectAdapter);
+        recyclerTask.setAdapter(projectAdapter);
     }
 }

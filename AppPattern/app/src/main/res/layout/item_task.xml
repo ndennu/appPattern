@@ -4,9 +4,8 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/title_project"
+        android:id="@+id/title_task"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="azertyuiop"/>
+        android:layout_height="wrap_content" />
 
 </android.support.constraint.ConstraintLayout>

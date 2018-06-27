@@ -30,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerProject.setLayoutManager(new LinearLayoutManager(this));
 
         List<Project> projects = new ArrayList<>();
-        projects.add(new Project());
-        projects.add(new Project());
+        projects.add(new Project.Builder().id(1).text("First project").build());
+        projects.add(new Project.Builder().id(2).text("Second project").build());
 
         ProjectAdapter projectAdapter = new ProjectAdapter(projects);
 

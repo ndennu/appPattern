@@ -29,8 +29,8 @@ public class TaskActivity extends AppCompatActivity {
         recyclerTask.setLayoutManager(new LinearLayoutManager(this));
 
         List<Task> tasks = new ArrayList<>();
-        tasks.add(new Task());
-        tasks.add(new Task());
+        tasks.add(new Task.Builder().id(1).text("first task").build());
+        tasks.add(new Task.Builder().id(2).text("second task").build());
 
         TaskAdapter projectAdapter = new TaskAdapter(tasks);
 

@@ -1,16 +1,12 @@
 package com.example.ndennu.todolib.model;
 
-import java.util.List;
-
-public class Task {
+public class Subtask {
     private int id;
     private String text;
-    private List<Subtask> subtasks;
 
-    private Task(Builder builder) {
+    private Subtask(Builder builder) {
         setId(builder.id);
         setText(builder.text);
-        setSubtasks(builder.subtasks);
     }
 
     public int getId() {
@@ -27,19 +23,11 @@ public class Task {
         this.text = text;
     }
 
-    public List<Subtask> getSubtasks() {
-        return subtasks;
-    }
-    public void setSubtasks(List<Subtask> subtasks) {
-        this.subtasks = subtasks;
-    }
-
 
     public static final class Builder {
         private int id;
         private String text;
-        private int id_project;
-        private List<Subtask> subtasks;
+        private int id_task;
 
         public Builder() {
         }
@@ -54,13 +42,8 @@ public class Task {
             return this;
         }
 
-        public Builder subtasks(List<Subtask> val) {
-            subtasks = val;
-            return this;
-        }
-
-        public Task build() {
-            return new Task(this);
+        public Subtask build() {
+            return new Subtask(this);
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.ndennu.todolib;
+package com.example.ndennu.todolib.SQLite;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -35,14 +35,24 @@ public class DatabaseAccess {
 
     /**
      * Insert Project
-     * @param project Project to insert
+     * @param project project Project to insert
+     * @return id
      */
-    public void insertProject(Project project){
+    public int insertProject(Project project){
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
         db.execSQL("INSERT INTO project VALUES (" +
                 project.getId() + ", \"" +
                 project.getText() + "\")");
+
+        Cursor cursor = db.rawQuery("SELECT last_insert_rowid()", null);
+        cursor.moveToFirst();
+
+        int id = cursor.getInt(0);
+
+        cursor.close();
         db.close();
+
+        return id;
     }
 
 
@@ -50,14 +60,24 @@ public class DatabaseAccess {
      * Insert task
      * @param project_id Project id
      * @param task Task to insert
+     * @return id
      */
-    public void insertTask(int project_id, Task task){
+    public int insertTask(int project_id, Task task){
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
         db.execSQL("INSERT INTO task VALUES (" +
                 task.getId() + ", " +
                 project_id + ", \"" +
                 task.getText() + "\")");
+
+        Cursor cursor = db.rawQuery("SELECT last_insert_rowid()", null);
+        cursor.moveToFirst();
+
+        int id = cursor.getInt(0);
+
+        cursor.close();
         db.close();
+
+        return id;
     }
 
 
@@ -65,14 +85,24 @@ public class DatabaseAccess {
      * Insert subtask
      * @param task_id  Task id
      * @param subtask Subtask to insert
+     * @return id
      */
-    public void insertSubTask(int task_id, Subtask subtask){
+    public int insertSubTask(int task_id, Subtask subtask){
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
         db.execSQL("INSERT INTO subtask VALUES (" +
                 subtask.getId() + ", " +
                 task_id + ", \"" +
                 subtask.getText() + "\")");
+
+        Cursor cursor = db.rawQuery("SELECT last_insert_rowid()", null);
+        cursor.moveToFirst();
+
+        int id = cursor.getInt(0);
+
+        cursor.close();
         db.close();
+
+        return id;
     }
 
 
@@ -80,7 +110,7 @@ public class DatabaseAccess {
      * delete a project from database
      * @param project_id Project to delete
      */
-    public void deleteProject(long project_id){
+    public void deleteProject(int project_id){
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
         db.execSQL("DELETE FROM project WHERE id = " + project_id);
         db.close();
@@ -91,7 +121,7 @@ public class DatabaseAccess {
      * delete a task from database
      * @param task_id Task to delete
      */
-    public void deleteTask(long task_id){
+    public void deleteTask(int task_id){
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
         db.execSQL("DELETE FROM task WHERE id = " + task_id);
         db.close();
@@ -135,6 +165,10 @@ public class DatabaseAccess {
         cursor.close();
         db.close();
 
+        for (Project project : projects) {
+            project.setTasks(getTasks(project.getId()));
+        }
+
         return projects;
 
     }
@@ -165,6 +199,10 @@ public class DatabaseAccess {
 
         cursor.close();
         db.close();
+
+        for (Task task : tasks) {
+            task.setSubtasks(getSubtasks(task.getId()));
+        }
 
         return tasks;
     }
@@ -201,9 +239,108 @@ public class DatabaseAccess {
     }
 
 
-    /*public void updateSubtask(Subtask subtask) {
-        SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
+    /**
+     * Get project by id
+     * @param project_id Project id to get
+     * @return Project
+     */
+    public Project getProjectById(int project_id){
+        SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
 
-        db.rawQuery("UPDATE subtask SET text = " +  + " ", null);
-    }*/
+        Cursor cursor = db.rawQuery("SELECT id, text FROM project WHERE id = " + project_id, null);
+        cursor.moveToFirst();
+
+        Project project = new Project.Builder()
+                .id(cursor.getInt(0))
+                .text(cursor.getString(1))
+                .build();
+
+        cursor.close();
+        db.close();
+
+        project.setTasks(getTasks(project_id));
+
+        return project;
+    }
+
+
+    /**
+     * Get task by id
+     * @param task_id Task id to get
+     * @return Task
+     */
+    public Task getTaskById(int task_id){
+        SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT id, text FROM task WHERE id = " + task_id, null);
+        cursor.moveToFirst();
+
+        Task task = new Task.Builder()
+                .id(cursor.getInt(0))
+                .text(cursor.getString(1))
+                .build();
+
+        cursor.close();
+        db.close();
+
+        task.setSubtasks(getSubtasks(task_id));
+
+        return task;
+    }
+
+
+    /**
+     * Get subtask by id
+     * @param subtask_id Subtask id to get
+     * @return Subtask
+     */
+    public Subtask getSubtaskById(int subtask_id){
+        SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT id, text FROM subtask WHERE id = " + subtask_id, null);
+        cursor.moveToFirst();
+
+        Subtask subtask = new Subtask.Builder()
+                .id(cursor.getInt(0))
+                .text(cursor.getString(1))
+                .build();
+
+        cursor.close();
+        db.close();
+
+        return subtask;
+    }
+
+
+    /**
+     * Update a project
+     * @param project Project to update
+     */
+    public void updateProject(Project project){
+        SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
+        db.execSQL("UPDATE project SET text = " + project.getText() + " WHERE id = " + project.getId());
+        db.close();
+    }
+
+
+    /**
+     * Update a task
+     * @param task Task to update
+     */
+    public void updateTask(Task task){
+        SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
+        db.execSQL("UPDATE task SET text = " + task.getText() + " WHERE id = " + task.getId());
+        db.close();
+    }
+
+
+    /**
+     * Update a subtask
+     * @param subtask Subtask to update
+     */
+    public void updateSubtask(Subtask subtask) {
+        SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
+        db.execSQL("UPDATE subtask SET text = " + subtask.getText() + " WHERE id = " + subtask.getId());
+        db.close();
+    }
 }

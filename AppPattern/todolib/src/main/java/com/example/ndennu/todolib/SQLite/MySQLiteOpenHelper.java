@@ -1,4 +1,4 @@
-package com.example.ndennu.todolib;
+package com.example.ndennu.todolib.SQLite;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,20 +9,20 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
     // Create table project if not exist
     private String createProject =
             "CREATE TABLE IF NOT EXISTS project (" +
-                    "id INTEGER PRIMARY KEY," +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "text TEXT);";
 
     // Create table task if not exist
     private String createTask =
             "CREATE TABLE IF NOT EXISTS task (" +
-                    "id INTEGER PRIMARY KEY," +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "project_id INTEGER," +
                     "text TEXT);";
 
     // Create table subtask if not exist
     private String createSubTask =
             "CREATE TABLE IF NOT EXISTS subtask (" +
-                    "id INTEGER PRIMARY KEY," +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "task_id INTEGER," +
                     "text TEXT);";
 

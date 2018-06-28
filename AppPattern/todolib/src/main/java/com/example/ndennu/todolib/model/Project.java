@@ -10,7 +10,7 @@ public class Project implements IClonable<Project> {
     private Project(Builder builder) {
         setId(builder.id);
         setText(builder.text);
-        tasks = builder.tasks;
+        setTasks(builder.tasks);
     }
 
     public int getId() {
@@ -25,6 +25,13 @@ public class Project implements IClonable<Project> {
     }
     public void setText(String text) {
         this.text = text;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.example.ndennu.todolib.model;
 
-public class Subtask {
+public class Subtask implements IClonable<Subtask> {
     private int id;
     private String text;
 
@@ -21,6 +21,11 @@ public class Subtask {
     }
     public void setText(String text) {
         this.text = text;
+    }
+
+    @Override
+    public Subtask clone() {
+        return new Builder().id(this.id).text(this.text).build();
     }
 
 

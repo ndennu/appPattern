@@ -2,7 +2,7 @@ package com.example.ndennu.todolib.model;
 
 import java.util.List;
 
-public class Task {
+public class Task implements IClonable<Task> {
     private int id;
     private String text;
     private List<Subtask> subtasks;
@@ -32,6 +32,11 @@ public class Task {
     }
     public void setSubtasks(List<Subtask> subtasks) {
         this.subtasks = subtasks;
+    }
+
+    @Override
+    public Task clone() {
+        return new Builder().id(this.id).text(this.text).build();
     }
 
 

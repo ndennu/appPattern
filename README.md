@@ -14,10 +14,10 @@
 
 - Memento : cancel edition
 
-- Iterator : for loop (not used)
+- Iterator : scan all task in a project / scan all subtask in a task
 
-## Pattern Soon
-
-- Command : request Database
+- Command : request Database (delete)
 
 - composite : tree Project > Task > SubTask
+
+- Facade : used to call command

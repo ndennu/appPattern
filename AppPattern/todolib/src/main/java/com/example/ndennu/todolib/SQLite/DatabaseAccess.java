@@ -98,8 +98,7 @@ public class DatabaseAccess {
      */
     public int insertSubTask(int task_id, Subtask subtask) {
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
-        db.execSQL("INSERT INTO subtask VALUES (" +
-                subtask.getId() + ", " +
+        db.execSQL("INSERT INTO subtask(task_id, text) VALUES (" +
                 task_id + ", \"" +
                 subtask.getText() + "\")");
 
@@ -110,6 +109,9 @@ public class DatabaseAccess {
 
         cursor.close();
         db.close();
+
+        subtask.setId(id);
+        ConcreteObservable.getINSTANCE().notifyObservers(subtask);
 
         return id;
     }

@@ -61,13 +61,11 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
 
     @Override
     public void update(Project project) {
-        Log.i("azer", ""+project.getId());
         for (int i = 0; i < projects.size(); i++) {
             if (projects.get(i).getId() == project.getId()) {
                 projects.get(i).setText(project.getText());
                 projectAdapter.notifyDataSetChanged();
                 ConcreteObservable.getINSTANCE().removeObsever(MainActivity.this);
-                Log.i("azertyuio", "sdfghjkl");
                 return;
             }
         }
@@ -77,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
     }
 
     private void fetchAllProject() {
-        Log.d("FETCH_PROJECT", "FETCH PROJECT");
         projects = DatabaseAccess.getInstance(MainActivity.this).getAllProjects();
     }
 
@@ -85,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
         projectAdapter.setListener(new ProjectAdapter.Listener() {
             @Override
             public void onGenreClick(Project project) {
-                Log.d("MAIN_ACTIVITY", "PUSH TASK ACTIVITY ID_PROJECT: " + project.getId());
                 Intent intent = new Intent(MainActivity.this, TaskActivity.class);
                 intent.putExtra(TaskActivity.ID_PROJECT, project.getId());
                 startActivity(intent);
@@ -109,7 +105,6 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Log.d("DIAL", "OK");
                                 project.setText(((EditText) v.findViewById(R.id.edit_text)).getText().toString());
 
                                 ConcreteObservable.getINSTANCE().addObserver(MainActivity.this);
@@ -119,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
                         .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Log.d("DIAL", "CANCEL");
                                 project.retoreMemento(memory.getMemento());
                             }
                         });

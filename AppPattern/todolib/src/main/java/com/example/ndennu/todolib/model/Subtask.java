@@ -1,5 +1,7 @@
 package com.example.ndennu.todolib.model;
 
+import android.widget.Toast;
+
 import com.example.ndennu.todolib.composite.TodoObject;
 
 public class Subtask extends TodoObject implements IClonable<Subtask> {
@@ -33,17 +35,19 @@ public class Subtask extends TodoObject implements IClonable<Subtask> {
 
     @Override
     public void add(TodoObject todoObject) {
-
+        // DO NOTHING
+        return;
     }
 
     @Override
     public void remove(TodoObject todoObject) {
-
+        // DO NOTHING
+        return;
     }
 
     @Override
     public void display(int depth) {
-
+        return;
     }
 
 

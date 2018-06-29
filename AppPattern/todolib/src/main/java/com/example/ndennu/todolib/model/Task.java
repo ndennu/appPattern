@@ -58,12 +58,12 @@ public class Task extends TodoObject implements IClonable<Task> {
 
     @Override
     public void add(TodoObject todoObject) {
-        
+        subtasks.add((Subtask) todoObject);
     }
 
     @Override
     public void remove(TodoObject todoObject) {
-
+        subtasks.remove(todoObject);
     }
 
     @Override

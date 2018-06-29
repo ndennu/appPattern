@@ -1,6 +1,7 @@
 package com.example.ndennu.apppattern;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -67,7 +68,6 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
     @Override
     public void update(Task task) {
         for (int i = 0; i < projectParent.getTasks().size(); i++) {
-            Log.i("ID", ""+projectParent.getTasks().get(i).getId() + ", " + task.getId());
             if (projectParent.getTasks().get(i).getId() == task.getId()) {
                 projectParent.getTasks().get(i).setText(task.getText());
                 taskAdapter.notifyDataSetChanged();
@@ -83,7 +83,6 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
     }
 
     private void fetchAllTaskFromProject(int idProject) {
-        Log.d("FETCH_TASK", "FETCH TASK");
         projectParent = DatabaseAccess.getInstance(TaskActivity.this).getProjectById(idProject);
     }
 
@@ -91,10 +90,9 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
         taskAdapter.setListener(new TaskAdapter.Listener() {
             @Override
             public void onGenreClick(Task task) {
-                Log.d("TASK_ACTIVITY", "PUSH ??? ACTIVITY");
-                /*Intent intent = new Intent(TaskActivity.this, TaskActivity.class);
-                intent.putExtra(TaskActivity.ID_PROJECT, project.getId());
-                startActivity(intent);*/
+                Intent intent = new Intent(TaskActivity.this, SubtaskActivity.class);
+                intent.putExtra(SubtaskActivity.ID_TASK, task.getId());
+                startActivity(intent);
             }
         });
     }
@@ -114,7 +112,6 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Log.d("DIAL", "OK");
                                 task.setText(((EditText) v.findViewById(R.id.edit_text)).getText().toString());
 
                                 ConcreteObservable.getINSTANCE().addObserver(TaskActivity.this);
@@ -124,7 +121,6 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
                         .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Log.d("DIAL", "CANCEL");
                                 task.retoreMemento(memory.getMemento());
                             }
                         });

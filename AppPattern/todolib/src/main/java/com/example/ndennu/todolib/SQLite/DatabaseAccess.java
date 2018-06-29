@@ -53,7 +53,9 @@ public class DatabaseAccess {
         cursor.close();
         db.close();
 
-        ConcreteObservable.getINSTANCE().notifyObservers(id);
+        project.setId(id);
+
+        ConcreteObservable.getINSTANCE().notifyObservers(project);
 
         return id;
     }
@@ -79,7 +81,9 @@ public class DatabaseAccess {
         cursor.close();
         db.close();
 
-        ConcreteObservable.getINSTANCE().notifyObservers(id);
+        task.setId(id);
+
+        ConcreteObservable.getINSTANCE().notifyObservers(task);
 
         return id;
     }
@@ -333,8 +337,9 @@ public class DatabaseAccess {
      */
     public void updateProject(Project project) {
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
-        db.execSQL("UPDATE project SET text = " + project.getText() + " WHERE id = " + project.getId());
+        db.execSQL("UPDATE project SET text = \"" + project.getText() + "\" WHERE id = " + project.getId());
         db.close();
+        ConcreteObservable.getINSTANCE().notifyObservers(project);
     }
 
 
@@ -345,7 +350,7 @@ public class DatabaseAccess {
      */
     public void updateTask(Task task) {
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
-        db.execSQL("UPDATE task SET text = " + task.getText() + " WHERE id = " + task.getId());
+        db.execSQL("UPDATE task SET text = \"" + task.getText() + "\" WHERE id = " + task.getId());
         db.close();
     }
 
@@ -357,7 +362,7 @@ public class DatabaseAccess {
      */
     public void updateSubtask(Subtask subtask) {
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
-        db.execSQL("UPDATE subtask SET text = " + subtask.getText() + " WHERE id = " + subtask.getId());
+        db.execSQL("UPDATE subtask SET text = \"" + subtask.getText() + "\" WHERE id = " + subtask.getId());
         db.close();
     }
 }

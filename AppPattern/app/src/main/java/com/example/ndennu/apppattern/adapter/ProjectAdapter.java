@@ -1,8 +1,6 @@
 package com.example.ndennu.apppattern.adapter;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +21,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
 
     private List<Project> projectList;
     private Listener listener;
+    private EditListener editListener;
 
     public ProjectAdapter(List<Project> projectList) {
         this.projectList = projectList;
@@ -30,6 +29,10 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
 
     public void setListener(Listener listener) {
         this.listener = listener;
+    }
+
+    public void setEditListener(EditListener editListener) {
+        this.editListener = editListener;
     }
 
     @NonNull
@@ -46,7 +49,12 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
         final Project p = projectList.get(position);
 
         holder.titleProject.setText(p.getText());
-
+        holder.editProject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (editListener != null) editListener.onImageClick(p);
+            }
+        });
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,7 +70,10 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.title_project) TextView titleProject;
+        @BindView(R.id.title_project)
+        TextView titleProject;
+        @BindView(R.id.img_edit)
+        ImageView editProject;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -72,5 +83,9 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
 
     public interface Listener {
         void onGenreClick(Project project);
+    }
+
+    public interface EditListener {
+        void onImageClick(Project project);
     }
 }

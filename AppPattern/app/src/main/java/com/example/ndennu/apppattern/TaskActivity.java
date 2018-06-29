@@ -20,7 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class TaskActivity extends AppCompatActivity implements Observer {
+public class TaskActivity extends AppCompatActivity implements Observer<Task> {
 
     public static String ID_PROJECT = "ID_PROJECT";
 
@@ -62,9 +62,9 @@ public class TaskActivity extends AppCompatActivity implements Observer {
     }
 
     @Override
-    public void update(int id) {
+    public void update(Task task) {
         Log.d("INSERT_TASK", "TASK DONE");
-        tasks.add(DatabaseAccess.getInstance(TaskActivity.this).getTaskById(id));
+        tasks.add(DatabaseAccess.getInstance(TaskActivity.this).getTaskById(task.getId()));
         taskAdapter.notifyDataSetChanged();
         ConcreteObservable.getINSTANCE().removeObsever(TaskActivity.this);
     }

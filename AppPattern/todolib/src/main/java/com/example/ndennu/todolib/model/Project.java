@@ -1,21 +1,27 @@
 package com.example.ndennu.todolib.model;
 
+import com.example.ndennu.todolib.memento.TodoObjectMemento;
+import com.example.ndennu.todolib.memento.TodoObjectState;
+
 import java.util.List;
 
 public class Project implements IClonable<Project> {
     private int id;
     private String text;
     private List<Task> tasks;
+    private TodoObjectState state = TodoObjectState.NEW;
 
     private Project(Builder builder) {
         setId(builder.id);
         setText(builder.text);
         setTasks(builder.tasks);
+        setState(TodoObjectState.LOADED);
     }
 
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -23,15 +29,27 @@ public class Project implements IClonable<Project> {
     public String getText() {
         return text;
     }
+
     public void setText(String text) {
+        state = TodoObjectState.CHANGED;
         this.text = text;
     }
 
     public List<Task> getTasks() {
         return tasks;
     }
+
     public void setTasks(List<Task> tasks) {
+        state = TodoObjectState.CHANGED;
         this.tasks = tasks;
+    }
+
+    public TodoObjectState getState() {
+        return state;
+    }
+
+    public void setState(TodoObjectState state) {
+        this.state = state;
     }
 
     @Override
@@ -67,5 +85,14 @@ public class Project implements IClonable<Project> {
         public Project build() {
             return new Project(this);
         }
+    }
+
+    public TodoObjectMemento getMemento() {
+        return new TodoObjectMemento(text, state);
+    }
+
+    public void retoreMemento(TodoObjectMemento memento) {
+        this.text = memento.getText();
+        this.state = memento.getState();
     }
 }

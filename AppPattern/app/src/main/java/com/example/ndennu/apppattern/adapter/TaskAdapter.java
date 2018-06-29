@@ -2,10 +2,10 @@ package com.example.ndennu.apppattern.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ndennu.apppattern.R;
@@ -15,12 +15,12 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     private List<Task> taskList;
     private Listener listener;
+    private EditListener editListener;
 
     public TaskAdapter(List<Task> taskList) {
         this.taskList = taskList;
@@ -28,6 +28,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     public void setListener(Listener listener) {
         this.listener = listener;
+    }
+
+    public void setEditListener(EditListener editListener) {
+        this.editListener = editListener;
     }
 
     @NonNull
@@ -45,6 +49,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
         holder.titleTask.setText(t.getText());
 
+        holder.editTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (editListener != null) editListener.onImageClick(t);
+            }
+        });
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -62,6 +72,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
         @BindView(R.id.title_task)
         TextView titleTask;
+        @BindView(R.id.img_edit_task)
+        ImageView editTask;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -71,5 +83,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     public interface Listener {
         void onGenreClick(Task task);
+    }
+
+    public interface EditListener {
+        void onImageClick(Task task);
     }
 }

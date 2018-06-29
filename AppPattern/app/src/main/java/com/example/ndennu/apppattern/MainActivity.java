@@ -56,25 +56,20 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
             Log.e("INSERT_PROJECT", "ERROR INSERT PROJECT");
         }
         ConcreteObservable.getINSTANCE().addObserver(MainActivity.this);
-
-        Log.d("INSERT_PROJECT", "INSERT PROJECT");
         DatabaseAccess.getInstance(MainActivity.this).insertProject(p);
     }
 
     @Override
     public void update(Project project) {
-        Log.i("zzzzzzz", ""+project.getId());
         // TODO: ITERATOR
         for (int i = 0; i < projects.size(); i++) {
             if (projects.get(i).getId() == project.getId()) {
                 projects.get(i).setText(project.getText());
                 projectAdapter.notifyDataSetChanged();
                 ConcreteObservable.getINSTANCE().removeObsever(MainActivity.this);
-                Log.e("aze", "azer");
                 return;
             }
         }
-        Log.d("INSERT_PROJECT", "INSERT DONE");
         projects.add(DatabaseAccess.getInstance(MainActivity.this).getProjectById(project.getId()));
         projectAdapter.notifyDataSetChanged();
         ConcreteObservable.getINSTANCE().removeObsever(MainActivity.this);
@@ -131,13 +126,5 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
                 alert.show();
             }
         });
-    }
-
-    private void dialogOK() {
-
-    }
-
-    private void dialogCancel() {
-
     }
 }

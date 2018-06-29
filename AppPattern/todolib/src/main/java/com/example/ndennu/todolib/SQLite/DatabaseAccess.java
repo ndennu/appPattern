@@ -352,6 +352,7 @@ public class DatabaseAccess {
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
         db.execSQL("UPDATE task SET text = \"" + task.getText() + "\" WHERE id = " + task.getId());
         db.close();
+        ConcreteObservable.getINSTANCE().notifyObservers(task);
     }
 
 

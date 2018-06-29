@@ -10,5 +10,4 @@ public abstract class TodoObject {
 
     public abstract void add(TodoObject todoObject);
     public abstract void remove(TodoObject todoObject);
-    public abstract void display(int depth);
 }

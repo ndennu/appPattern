@@ -71,11 +71,6 @@ public class Project extends TodoObject implements IClonable<Project> {
         tasks.remove(todoObject);
     }
 
-    @Override
-    public void display(int depth) {
-
-    }
-
 
     public static final class Builder {
         private int id;

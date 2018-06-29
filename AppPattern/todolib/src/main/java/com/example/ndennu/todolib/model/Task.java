@@ -24,6 +24,7 @@ public class Task extends TodoObject implements IClonable<Task> {
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -31,6 +32,7 @@ public class Task extends TodoObject implements IClonable<Task> {
     public String getText() {
         return text;
     }
+
     public void setText(String text) {
         this.state = TodoObjectState.CHANGED;
         this.text = text;
@@ -39,6 +41,7 @@ public class Task extends TodoObject implements IClonable<Task> {
     public List<Subtask> getSubtasks() {
         return subtasks;
     }
+
     public void setSubtasks(List<Subtask> subtasks) {
         this.state = TodoObjectState.CHANGED;
         this.subtasks = subtasks;
@@ -47,6 +50,7 @@ public class Task extends TodoObject implements IClonable<Task> {
     public TodoObjectState getState() {
         return state;
     }
+
     public void setState(TodoObjectState state) {
         this.state = state;
     }
@@ -64,11 +68,6 @@ public class Task extends TodoObject implements IClonable<Task> {
     @Override
     public void remove(TodoObject todoObject) {
         subtasks.remove(todoObject);
-    }
-
-    @Override
-    public void display(int depth) {
-
     }
 
 

@@ -110,11 +110,11 @@ public class Task extends TodoObject implements IClonable<Task> {
         this.state = memento.getState();
     }
 
-    public IIterator getIterator() {
+    public IIterator<Subtask> getIterator() {
         return new SubtaskIterator();
     }
 
-    private class SubtaskIterator implements IIterator {
+    private class SubtaskIterator implements IIterator<Subtask> {
 
         private int index;
 

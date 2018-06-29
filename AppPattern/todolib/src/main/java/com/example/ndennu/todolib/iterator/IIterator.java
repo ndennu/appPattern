@@ -1,8 +1,7 @@
 package com.example.ndennu.todolib.iterator;
 
-import com.example.ndennu.todolib.composite.TodoObject;
 
-public interface IIterator {
+public interface IIterator<T> {
     boolean hasNext();
-    TodoObject next();
+    T next();
 }

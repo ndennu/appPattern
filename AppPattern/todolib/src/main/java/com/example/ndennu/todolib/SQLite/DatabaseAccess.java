@@ -37,7 +37,6 @@ public class DatabaseAccess {
 
     /**
      * Insert Project
-     *
      * @param project project Project to insert
      * @return id
      */

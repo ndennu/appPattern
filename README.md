@@ -12,11 +12,11 @@
 
 - Observer : update UI after insert 
 
+- Memento : cancel edition
+
 ## Pattern Soon
 
 - Command : request Database
-
-- Memento : cancel edition
 
 - composite : tree Project > Task > SubTask
 

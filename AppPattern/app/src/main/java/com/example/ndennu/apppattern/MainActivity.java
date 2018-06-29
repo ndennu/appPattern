@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
 
     @OnClick(R.id.add_project)
     public void addProject() {
-        Project p = (Project) PrototypeFactory.getInstance().getPrototypes(Project.class);
+        Project p = (Project) new PrototypeFactory().getPrototypes(Project.class);
         if (p == null) {
             Log.e("INSERT_PROJECT", "ERROR INSERT PROJECT");
         }
@@ -61,16 +61,17 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
 
     @Override
     public void update(Project project) {
-        // TODO: ITERATOR
+        Log.i("azer", ""+project.getId());
         for (int i = 0; i < projects.size(); i++) {
             if (projects.get(i).getId() == project.getId()) {
                 projects.get(i).setText(project.getText());
                 projectAdapter.notifyDataSetChanged();
                 ConcreteObservable.getINSTANCE().removeObsever(MainActivity.this);
+                Log.i("azertyuio", "sdfghjkl");
                 return;
             }
         }
-        projects.add(DatabaseAccess.getInstance(MainActivity.this).getProjectById(project.getId()));
+        projects.add(project);
         projectAdapter.notifyDataSetChanged();
         ConcreteObservable.getINSTANCE().removeObsever(MainActivity.this);
     }

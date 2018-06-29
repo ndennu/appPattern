@@ -1,10 +1,13 @@
 package com.example.ndennu.todolib.model;
 
-public class Subtask implements IClonable<Subtask> {
+import com.example.ndennu.todolib.composite.TodoObject;
+
+public class Subtask extends TodoObject implements IClonable<Subtask> {
     private int id;
     private String text;
 
     private Subtask(Builder builder) {
+        super(builder.text);
         setId(builder.id);
         setText(builder.text);
     }
@@ -26,6 +29,21 @@ public class Subtask implements IClonable<Subtask> {
     @Override
     public Subtask clone() {
         return new Builder().id(this.id).text(this.text).build();
+    }
+
+    @Override
+    public void add(TodoObject todoObject) {
+
+    }
+
+    @Override
+    public void remove(TodoObject todoObject) {
+
+    }
+
+    @Override
+    public void display(int depth) {
+
     }
 
 

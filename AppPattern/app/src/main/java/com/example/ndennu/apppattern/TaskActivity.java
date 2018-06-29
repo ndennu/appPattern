@@ -17,6 +17,7 @@ import com.example.ndennu.todolib.Observer.Observer;
 import com.example.ndennu.todolib.PrototypeFactory;
 import com.example.ndennu.todolib.SQLite.DatabaseAccess;
 import com.example.ndennu.todolib.memento.TodoObjectStateMemory;
+import com.example.ndennu.todolib.model.Project;
 import com.example.ndennu.todolib.model.Task;
 
 import java.util.ArrayList;
@@ -33,9 +34,8 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
     @BindView(R.id.recycler_task)
     RecyclerView recyclerTask;
 
-    private List<Task> tasks;
     private TaskAdapter taskAdapter;
-    int idProject;
+    private Project projectParent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +44,10 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
         ButterKnife.bind(this);
         recyclerTask.setLayoutManager(new LinearLayoutManager(this));
 
-        idProject = getIntent().getIntExtra(ID_PROJECT, 1);
+        int idProject = getIntent().getIntExtra(ID_PROJECT, 1);
 
-        fetchAllTaskFromProject();
-        taskAdapter = new TaskAdapter(tasks);
+        fetchAllTaskFromProject(idProject);
+        taskAdapter = new TaskAdapter(projectParent.getTasks());
         setOnClickItem();
         setOnClickImg();
 
@@ -56,32 +56,35 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
 
     @OnClick(R.id.add_task)
     public void addTask() {
-        Task t = (Task) PrototypeFactory.getInstance().getPrototypes(Task.class);
+        Task t = (Task) new PrototypeFactory().getPrototypes(Task.class);
         if (t == null) {
             Log.e("INSERT_TASK", "ERROR INSERT TASK");
         }
         ConcreteObservable.getINSTANCE().addObserver(TaskActivity.this);
-        DatabaseAccess.getInstance(TaskActivity.this).insertTask(idProject, t);
+        DatabaseAccess.getInstance(TaskActivity.this).insertTask(projectParent.getId(), t);
     }
 
     @Override
     public void update(Task task) {
-        for (int i = 0; i < tasks.size(); i++) {
-            if (tasks.get(i).getId() == task.getId()) {
-                tasks.get(i).setText(task.getText());
+        for (int i = 0; i < projectParent.getTasks().size(); i++) {
+            Log.i("ID", ""+projectParent.getTasks().get(i).getId() + ", " + task.getId());
+            if (projectParent.getTasks().get(i).getId() == task.getId()) {
+                projectParent.getTasks().get(i).setText(task.getText());
                 taskAdapter.notifyDataSetChanged();
                 ConcreteObservable.getINSTANCE().removeObsever(TaskActivity.this);
                 return;
             }
         }
-        tasks.add(DatabaseAccess.getInstance(TaskActivity.this).getTaskById(task.getId()));
+
+        projectParent.add(task);
         taskAdapter.notifyDataSetChanged();
+
         ConcreteObservable.getINSTANCE().removeObsever(TaskActivity.this);
     }
 
-    private void fetchAllTaskFromProject() {
+    private void fetchAllTaskFromProject(int idProject) {
         Log.d("FETCH_TASK", "FETCH TASK");
-        tasks = DatabaseAccess.getInstance(TaskActivity.this).getTasks(idProject);
+        projectParent = DatabaseAccess.getInstance(TaskActivity.this).getProjectById(idProject);
     }
 
     private void setOnClickItem() {

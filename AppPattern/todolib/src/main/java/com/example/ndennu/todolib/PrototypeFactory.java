@@ -15,14 +15,14 @@ public class PrototypeFactory {
 
     private static PrototypeFactory INSTANCE;
 
-    public static PrototypeFactory getInstance() {
+    /*public static PrototypeFactory getInstance() {
         if(INSTANCE == null){
             INSTANCE = new PrototypeFactory();
         }
         return INSTANCE;
-    }
+    }*/
 
-    private PrototypeFactory() {
+    public PrototypeFactory() {
 
         prototypes.put(Project.class, new Project.Builder().text("New project").build());
         prototypes.put(Task.class, new Task.Builder().text("New task").build());

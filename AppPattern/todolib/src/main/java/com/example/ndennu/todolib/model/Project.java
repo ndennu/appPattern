@@ -1,17 +1,20 @@
 package com.example.ndennu.todolib.model;
 
+import com.example.ndennu.todolib.composite.TodoObject;
+import com.example.ndennu.todolib.iterator.IIterator;
 import com.example.ndennu.todolib.memento.TodoObjectMemento;
 import com.example.ndennu.todolib.memento.TodoObjectState;
 
 import java.util.List;
 
-public class Project implements IClonable<Project> {
+public class Project extends TodoObject implements IClonable<Project> {
     private int id;
     private String text;
     private List<Task> tasks;
     private TodoObjectState state = TodoObjectState.NEW;
 
     private Project(Builder builder) {
+        super(builder.text);
         setId(builder.id);
         setText(builder.text);
         setTasks(builder.tasks);
@@ -58,6 +61,21 @@ public class Project implements IClonable<Project> {
         return new Builder().id(this.id).text(this.text).build();
     }
 
+    @Override
+    public void add(TodoObject todoObject) {
+        tasks.add((Task) todoObject);
+    }
+
+    @Override
+    public void remove(TodoObject todoObject) {
+        tasks.remove(todoObject);
+    }
+
+    @Override
+    public void display(int depth) {
+
+    }
+
 
     public static final class Builder {
         private int id;
@@ -94,5 +112,26 @@ public class Project implements IClonable<Project> {
     public void retoreMemento(TodoObjectMemento memento) {
         this.text = memento.getText();
         this.state = memento.getState();
+    }
+
+    public IIterator getIterator() {
+        return new TaskIterator();
+    }
+
+    private class TaskIterator implements IIterator {
+
+        private int index;
+
+        @Override
+        public boolean hasNext() {
+            return index < tasks.size();
+        }
+
+        @Override
+        public Task next() {
+            if (this.hasNext())
+                return tasks.get(index++);
+            return null;
+        }
     }
 }

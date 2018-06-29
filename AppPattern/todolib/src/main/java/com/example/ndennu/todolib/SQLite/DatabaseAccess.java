@@ -256,6 +256,9 @@ public class DatabaseAccess {
         return subtasks;
     }
 
+    public Project getProjectById(int project_id) {
+        return getProjectById(project_id, true);
+    }
 
     /**
      * Get project by id
@@ -263,7 +266,7 @@ public class DatabaseAccess {
      * @param project_id Project id to get
      * @return Project
      */
-    public Project getProjectById(int project_id) {
+    public Project getProjectById(int project_id, boolean withTasks) {
         SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
 
         Cursor cursor = db.rawQuery("SELECT id, text FROM project WHERE id = " + project_id, null);
@@ -277,7 +280,9 @@ public class DatabaseAccess {
         cursor.close();
         db.close();
 
-        project.setTasks(getTasks(project_id));
+        if(withTasks){
+            project.setTasks(getTasks(project_id));
+        }
 
         return project;
     }

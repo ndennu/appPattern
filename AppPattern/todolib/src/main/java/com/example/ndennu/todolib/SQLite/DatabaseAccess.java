@@ -21,12 +21,12 @@ public class DatabaseAccess {
     private MySQLiteOpenHelper mySQLiteOpenHelper;
 
 
-    private DatabaseAccess(Context context){
+    private DatabaseAccess(Context context) {
         mySQLiteOpenHelper = new MySQLiteOpenHelper(context, DATABASE_NAME, DATABASE_VERSION);
     }
 
-    public static DatabaseAccess getInstance(Context context){
-        if(instance == null){
+    public static DatabaseAccess getInstance(Context context) {
+        if (instance == null) {
             instance = new DatabaseAccess(context);
         }
 
@@ -36,10 +36,11 @@ public class DatabaseAccess {
 
     /**
      * Insert Project
+     *
      * @param project project Project to insert
      * @return id
      */
-    public int insertProject(Project project){
+    public int insertProject(Project project) {
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
         db.execSQL("INSERT INTO project(text) VALUES (\"" +
                 project.getText() + "\")");
@@ -59,14 +60,14 @@ public class DatabaseAccess {
 
     /**
      * Insert task
+     *
      * @param project_id Project id
-     * @param task Task to insert
+     * @param task       Task to insert
      * @return id
      */
-    public int insertTask(int project_id, Task task){
+    public int insertTask(int project_id, Task task) {
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
-        db.execSQL("INSERT INTO task VALUES (" +
-                task.getId() + ", " +
+        db.execSQL("INSERT INTO task(project_id, text) VALUES (" +
                 project_id + ", \"" +
                 task.getText() + "\")");
 
@@ -78,17 +79,20 @@ public class DatabaseAccess {
         cursor.close();
         db.close();
 
+        ConcreteObservable.getINSTANCE().notifyObservers(id);
+
         return id;
     }
 
 
     /**
      * Insert subtask
-     * @param task_id  Task id
+     *
+     * @param task_id Task id
      * @param subtask Subtask to insert
      * @return id
      */
-    public int insertSubTask(int task_id, Subtask subtask){
+    public int insertSubTask(int task_id, Subtask subtask) {
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
         db.execSQL("INSERT INTO subtask VALUES (" +
                 subtask.getId() + ", " +
@@ -109,9 +113,10 @@ public class DatabaseAccess {
 
     /**
      * delete a project from database
+     *
      * @param project_id Project to delete
      */
-    public void deleteProject(int project_id){
+    public void deleteProject(int project_id) {
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
         db.execSQL("DELETE FROM project WHERE id = " + project_id);
         db.close();
@@ -120,9 +125,10 @@ public class DatabaseAccess {
 
     /**
      * delete a task from database
+     *
      * @param task_id Task to delete
      */
-    public void deleteTask(int task_id){
+    public void deleteTask(int task_id) {
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
         db.execSQL("DELETE FROM task WHERE id = " + task_id);
         db.close();
@@ -131,9 +137,10 @@ public class DatabaseAccess {
 
     /**
      * delete a subtask from database
+     *
      * @param subtask_id Subtask to delete
      */
-    public void deleteSubtask(int subtask_id){
+    public void deleteSubtask(int subtask_id) {
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
         db.execSQL("DELETE FROM subtask WHERE id = " + subtask_id);
         db.close();
@@ -142,6 +149,7 @@ public class DatabaseAccess {
 
     /**
      * Get all projects
+     *
      * @return List of projects
      */
     public List<Project> getAllProjects() {
@@ -152,7 +160,7 @@ public class DatabaseAccess {
         Cursor cursor = db.rawQuery("SELECT id, text FROM project ORDER BY id", null);
         cursor.moveToFirst();
 
-        while (!cursor.isAfterLast()){
+        while (!cursor.isAfterLast()) {
             projects.add(
                     new Project.Builder()
                             .id(cursor.getInt(0))
@@ -176,6 +184,7 @@ public class DatabaseAccess {
 
     /**
      * Get tasks for a project
+     *
      * @param project_id Project id
      * @return List of Tasks
      */
@@ -184,10 +193,10 @@ public class DatabaseAccess {
 
         SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT id, text FROM subtask WHERE task_id = " + project_id + " ORDER BY id", null);
+        Cursor cursor = db.rawQuery("SELECT id, text FROM task WHERE project_id = " + project_id + " ORDER BY id", null);
         cursor.moveToFirst();
 
-        while (!cursor.isAfterLast()){
+        while (!cursor.isAfterLast()) {
             tasks.add(
                     new Task.Builder()
                             .id(cursor.getInt(0))
@@ -211,6 +220,7 @@ public class DatabaseAccess {
 
     /**
      * Get subtasks for a task
+     *
      * @param task_id Task id
      * @return List of Subtasks
      */
@@ -222,7 +232,7 @@ public class DatabaseAccess {
         Cursor cursor = db.rawQuery("SELECT id, text FROM subtask WHERE task_id = " + task_id + " ORDER BY id", null);
         cursor.moveToFirst();
 
-        while (!cursor.isAfterLast()){
+        while (!cursor.isAfterLast()) {
             subtasks.add(
                     new Subtask.Builder()
                             .id(cursor.getInt(0))
@@ -242,10 +252,11 @@ public class DatabaseAccess {
 
     /**
      * Get project by id
+     *
      * @param project_id Project id to get
      * @return Project
      */
-    public Project getProjectById(int project_id){
+    public Project getProjectById(int project_id) {
         SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
 
         Cursor cursor = db.rawQuery("SELECT id, text FROM project WHERE id = " + project_id, null);
@@ -267,10 +278,11 @@ public class DatabaseAccess {
 
     /**
      * Get task by id
+     *
      * @param task_id Task id to get
      * @return Task
      */
-    public Task getTaskById(int task_id){
+    public Task getTaskById(int task_id) {
         SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
 
         Cursor cursor = db.rawQuery("SELECT id, text FROM task WHERE id = " + task_id, null);
@@ -292,10 +304,11 @@ public class DatabaseAccess {
 
     /**
      * Get subtask by id
+     *
      * @param subtask_id Subtask id to get
      * @return Subtask
      */
-    public Subtask getSubtaskById(int subtask_id){
+    public Subtask getSubtaskById(int subtask_id) {
         SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
 
         Cursor cursor = db.rawQuery("SELECT id, text FROM subtask WHERE id = " + subtask_id, null);
@@ -315,9 +328,10 @@ public class DatabaseAccess {
 
     /**
      * Update a project
+     *
      * @param project Project to update
      */
-    public void updateProject(Project project){
+    public void updateProject(Project project) {
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
         db.execSQL("UPDATE project SET text = " + project.getText() + " WHERE id = " + project.getId());
         db.close();
@@ -326,9 +340,10 @@ public class DatabaseAccess {
 
     /**
      * Update a task
+     *
      * @param task Task to update
      */
-    public void updateTask(Task task){
+    public void updateTask(Task task) {
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
         db.execSQL("UPDATE task SET text = " + task.getText() + " WHERE id = " + task.getId());
         db.close();
@@ -337,6 +352,7 @@ public class DatabaseAccess {
 
     /**
      * Update a subtask
+     *
      * @param subtask Subtask to update
      */
     public void updateSubtask(Subtask subtask) {

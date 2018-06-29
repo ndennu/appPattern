@@ -15,7 +15,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
+public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     private List<Task> taskList;
     private Listener listener;
@@ -39,9 +39,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.titleTask.setText("azertyuiop");
-
         final Task t = taskList.get(position);
+
+        holder.titleTask.setText(t.getText());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,7 +58,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder>{
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.title_task) TextView titleTask;
+        @BindView(R.id.title_task)
+        TextView titleTask;
 
         public ViewHolder(View itemView) {
             super(itemView);

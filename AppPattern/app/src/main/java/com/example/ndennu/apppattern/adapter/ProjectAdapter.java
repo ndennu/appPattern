@@ -45,7 +45,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Project p = projectList.get(position);
 
-        holder.titleProject.setText(projectList.get(position).getText());
+        holder.titleProject.setText(p.getText());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -10,6 +10,8 @@
 
 - prototype : build model
 
+- Observer : update UI after insert 
+
 ## Pattern Soon
 
 - Command : request Database
@@ -20,4 +22,3 @@
 
 - Iterator : for loop
 
-- Observer : update UI after insert 

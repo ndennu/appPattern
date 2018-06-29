@@ -22,6 +22,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
     private List<Project> projectList;
     private Listener listener;
     private EditListener editListener;
+    private DeleteListener deleteListener;
 
     public ProjectAdapter(List<Project> projectList) {
         this.projectList = projectList;
@@ -33,6 +34,10 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
 
     public void setEditListener(EditListener editListener) {
         this.editListener = editListener;
+    }
+
+    public void setDeleteListener(DeleteListener deleteListener) {
+        this.deleteListener = deleteListener;
     }
 
     @NonNull
@@ -55,6 +60,12 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
                 if (editListener != null) editListener.onImageClick(p);
             }
         });
+        holder.deleteProject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (deleteListener != null) deleteListener.onTrashClick(p);
+            }
+        });
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,6 +85,8 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
         TextView titleProject;
         @BindView(R.id.img_edit)
         ImageView editProject;
+        @BindView(R.id.img_delete)
+        ImageView deleteProject;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -87,5 +100,9 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
 
     public interface EditListener {
         void onImageClick(Project project);
+    }
+
+    public interface DeleteListener {
+        void onTrashClick(Project project);
     }
 }

@@ -21,6 +21,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     private List<Task> taskList;
     private Listener listener;
     private EditListener editListener;
+    private DeleteListener deleteListener;
 
     public TaskAdapter(List<Task> taskList) {
         this.taskList = taskList;
@@ -32,6 +33,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     public void setEditListener(EditListener editListener) {
         this.editListener = editListener;
+    }
+
+    public void setDeleteListener(DeleteListener deleteListener) {
+        this.deleteListener = deleteListener;
     }
 
     @NonNull
@@ -48,7 +53,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         final Task t = taskList.get(position);
 
         holder.titleTask.setText(t.getText());
-
+        holder.deleteTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (deleteListener != null) deleteListener.onImageTrashClick(t);
+            }
+        });
         holder.editTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,6 +84,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         TextView titleTask;
         @BindView(R.id.img_edit_task)
         ImageView editTask;
+        @BindView(R.id.img_delete_task)
+        ImageView deleteTask;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -87,5 +99,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     public interface EditListener {
         void onImageClick(Task task);
+    }
+
+    public interface DeleteListener {
+        void onImageTrashClick(Task task);
     }
 }

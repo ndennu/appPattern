@@ -8,6 +8,7 @@ import com.example.ndennu.todolib.Observer.ConcreteObservable;
 import com.example.ndennu.todolib.Observer.Observer;
 import com.example.ndennu.todolib.PrototypeFactory;
 import com.example.ndennu.todolib.SQLite.DatabaseAccess;
+import com.example.ndennu.todolib.SQLite.Request;
 import com.example.ndennu.todolib.model.Subtask;
 import com.example.ndennu.todolib.model.Task;
 
@@ -40,17 +41,23 @@ public class SubtaskActivity extends AppCompatActivity implements Observer<Subta
     }
 
     @Override
-    public void update(Subtask subtask) {
-        for (int i = 0; i < taskParent.getSubtasks().size(); i++) {
-            if (taskParent.getSubtasks().get(i).getId() == subtask.getId()) {
-                taskParent.getSubtasks().get(i).setText(subtask.getText());
+    public void update(Subtask subtask, Request request) {
+        if (Request.UPDATE == request) {
+            for (int i = 0; i < taskParent.getSubtasks().size(); i++) {
+                if (taskParent.getSubtasks().get(i).getId() == subtask.getId()) {
+                    taskParent.getSubtasks().get(i).setText(subtask.getText());
 //                taskAdapter.notifyDataSetChanged();
-                ConcreteObservable.getINSTANCE().removeObsever(SubtaskActivity.this);
-                return;
+                    ConcreteObservable.getINSTANCE().removeObsever(SubtaskActivity.this);
+                    return;
+                }
             }
         }
 
-        taskParent.add(subtask);
+        if (Request.INSERT == request)
+            taskParent.add(subtask);
+
+        if (Request.DELETE == request)
+            taskParent.remove(subtask);
 //        taskAdapter.notifyDataSetChanged();
 
         ConcreteObservable.getINSTANCE().removeObsever(SubtaskActivity.this);

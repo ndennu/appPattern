@@ -12,17 +12,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
+import com.example.ndennu.apppattern.adapter.ProjectAdapter;
 import com.example.ndennu.apppattern.adapter.TaskAdapter;
 import com.example.ndennu.todolib.Observer.ConcreteObservable;
 import com.example.ndennu.todolib.Observer.Observer;
 import com.example.ndennu.todolib.PrototypeFactory;
 import com.example.ndennu.todolib.SQLite.DatabaseAccess;
+import com.example.ndennu.todolib.SQLite.DatabaseFacade;
+import com.example.ndennu.todolib.SQLite.Request;
 import com.example.ndennu.todolib.memento.TodoObjectStateMemory;
 import com.example.ndennu.todolib.model.Project;
 import com.example.ndennu.todolib.model.Task;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,6 +51,7 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
         taskAdapter = new TaskAdapter(projectParent.getTasks());
         setOnClickItem();
         setOnClickImg();
+        setOnClickTrash();
 
         recyclerTask.setAdapter(taskAdapter);
     }
@@ -66,19 +67,25 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
     }
 
     @Override
-    public void update(Task task) {
-        for (int i = 0; i < projectParent.getTasks().size(); i++) {
-            if (projectParent.getTasks().get(i).getId() == task.getId()) {
-                projectParent.getTasks().get(i).setText(task.getText());
-                taskAdapter.notifyDataSetChanged();
-                ConcreteObservable.getINSTANCE().removeObsever(TaskActivity.this);
-                return;
+    public void update(Task task, Request request) {
+        if (Request.UPDATE == request) {
+            for (int i = 0; i < projectParent.getTasks().size(); i++) {
+                if (projectParent.getTasks().get(i).getId() == task.getId()) {
+                    projectParent.getTasks().get(i).setText(task.getText());
+                    taskAdapter.notifyDataSetChanged();
+                    ConcreteObservable.getINSTANCE().removeObsever(TaskActivity.this);
+                    return;
+                }
             }
         }
 
-        projectParent.add(task);
-        taskAdapter.notifyDataSetChanged();
+        if (Request.INSERT == request)
+            projectParent.add(task);
 
+        if (Request.DELETE == request)
+            projectParent.remove(task);
+
+        taskAdapter.notifyDataSetChanged();
         ConcreteObservable.getINSTANCE().removeObsever(TaskActivity.this);
     }
 
@@ -125,6 +132,35 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
                             }
                         });
                 alert.setView(v);
+                alert.show();
+            }
+        });
+    }
+
+    private void setOnClickTrash() {
+
+        taskAdapter.setDeleteListener(new TaskAdapter.DeleteListener() {
+            @Override
+            public void onImageTrashClick(final Task task) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(TaskActivity.this)
+                        .setTitle("Delete")
+                        .setView(R.layout.popup_delete)
+                        .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ConcreteObservable.getINSTANCE().addObserver(TaskActivity.this);
+                                if (DatabaseFacade.deleteTask(TaskActivity.this, task, projectParent.getId())) {
+                                    ConcreteObservable.getINSTANCE().notifyObservers(task, Request.DELETE);
+                                }
+
+                            }
+                        })
+                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                return;
+                            }
+                        });
                 alert.show();
             }
         });

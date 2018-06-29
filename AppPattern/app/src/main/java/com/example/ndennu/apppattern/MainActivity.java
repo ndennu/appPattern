@@ -17,6 +17,8 @@ import com.example.ndennu.todolib.Observer.ConcreteObservable;
 import com.example.ndennu.todolib.Observer.Observer;
 import com.example.ndennu.todolib.PrototypeFactory;
 import com.example.ndennu.todolib.SQLite.DatabaseAccess;
+import com.example.ndennu.todolib.SQLite.DatabaseFacade;
+import com.example.ndennu.todolib.SQLite.Request;
 import com.example.ndennu.todolib.memento.TodoObjectStateMemory;
 import com.example.ndennu.todolib.model.Project;
 
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
         projectAdapter = new ProjectAdapter(projects);
         setOnClickItem();
         setOnClickImg();
+        setOnClickTrash();
 
         recyclerProject.setAdapter(projectAdapter);
     }
@@ -60,16 +63,23 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
     }
 
     @Override
-    public void update(Project project) {
-        for (int i = 0; i < projects.size(); i++) {
-            if (projects.get(i).getId() == project.getId()) {
-                projects.get(i).setText(project.getText());
-                projectAdapter.notifyDataSetChanged();
-                ConcreteObservable.getINSTANCE().removeObsever(MainActivity.this);
-                return;
+    public void update(Project project, Request request) {
+        if (Request.UPDATE == request) {
+            for (int i = 0; i < projects.size(); i++) {
+                if (projects.get(i).getId() == project.getId()) {
+                    projects.get(i).setText(project.getText());
+                    projectAdapter.notifyDataSetChanged();
+                    ConcreteObservable.getINSTANCE().removeObsever(MainActivity.this);
+                    return;
+                }
             }
         }
-        projects.add(project);
+        if (Request.INSERT == request)
+            projects.add(project);
+
+        if (Request.DELETE == request)
+            projects.remove(project);
+
         projectAdapter.notifyDataSetChanged();
         ConcreteObservable.getINSTANCE().removeObsever(MainActivity.this);
     }
@@ -102,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
 
                 AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this)
                         .setTitle("Edit")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 project.setText(((EditText) v.findViewById(R.id.edit_text)).getText().toString());
@@ -118,6 +128,35 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
                             }
                         });
                 alert.setView(v);
+                alert.show();
+            }
+        });
+    }
+
+    private void setOnClickTrash() {
+        projectAdapter.setDeleteListener(new ProjectAdapter.DeleteListener() {
+            @Override
+            public void onTrashClick(final Project project) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Delete")
+                        .setView(R.layout.popup_delete)
+                        .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ConcreteObservable.getINSTANCE().addObserver(MainActivity.this);
+                                //DatabaseAccess.getInstance(MainActivity.this).(project);
+                                if (DatabaseFacade.deleteProject(MainActivity.this, project)) {
+                                    ConcreteObservable.getINSTANCE().notifyObservers(project, Request.DELETE);
+                                }
+
+                            }
+                        })
+                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                return;
+                            }
+                        });
                 alert.show();
             }
         });

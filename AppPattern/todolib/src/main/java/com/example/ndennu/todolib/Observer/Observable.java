@@ -1,5 +1,6 @@
 package com.example.ndennu.todolib.Observer;
 
+import com.example.ndennu.todolib.SQLite.Request;
 import com.example.ndennu.todolib.model.Project;
 import com.example.ndennu.todolib.model.Subtask;
 import com.example.ndennu.todolib.model.Task;
@@ -18,21 +19,21 @@ public abstract class Observable<T> {
         observers.remove(observer);
     }
 
-    public void notifyObservers(Project project) {
+    public void notifyObservers(Project project, Request request) {
         for (Observer obs: observers) {
-            obs.update(project);
+            obs.update(project, request);
         }
     }
 
-    public void notifyObservers(Task task) {
+    public void notifyObservers(Task task, Request request) {
         for (Observer obs: observers) {
-            obs.update(task);
+            obs.update(task, request);
         }
     }
 
-    public void notifyObservers(Subtask subtask) {
+    public void notifyObservers(Subtask subtask, Request request) {
         for (Observer obs: observers) {
-            obs.update(subtask);
+            obs.update(subtask, request);
         }
     }
 }

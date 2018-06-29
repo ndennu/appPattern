@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.example.ndennu.todolib.Observer.ConcreteObservable;
+import com.example.ndennu.todolib.R;
 import com.example.ndennu.todolib.model.Project;
 import com.example.ndennu.todolib.model.Subtask;
 import com.example.ndennu.todolib.model.Task;
@@ -55,7 +56,7 @@ public class DatabaseAccess {
 
         project.setId(id);
 
-        ConcreteObservable.getINSTANCE().notifyObservers(project);
+        ConcreteObservable.getINSTANCE().notifyObservers(project, Request.INSERT);
 
         return id;
     }
@@ -83,7 +84,7 @@ public class DatabaseAccess {
 
         task.setId(id);
 
-        ConcreteObservable.getINSTANCE().notifyObservers(task);
+        ConcreteObservable.getINSTANCE().notifyObservers(task, Request.INSERT);
 
         return id;
     }
@@ -111,7 +112,7 @@ public class DatabaseAccess {
         db.close();
 
         subtask.setId(id);
-        ConcreteObservable.getINSTANCE().notifyObservers(subtask);
+        ConcreteObservable.getINSTANCE().notifyObservers(subtask, Request.INSERT);
 
         return id;
     }
@@ -341,7 +342,7 @@ public class DatabaseAccess {
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
         db.execSQL("UPDATE project SET text = \"" + project.getText() + "\" WHERE id = " + project.getId());
         db.close();
-        ConcreteObservable.getINSTANCE().notifyObservers(project);
+        ConcreteObservable.getINSTANCE().notifyObservers(project, Request.UPDATE);
     }
 
 
@@ -354,7 +355,7 @@ public class DatabaseAccess {
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
         db.execSQL("UPDATE task SET text = \"" + task.getText() + "\" WHERE id = " + task.getId());
         db.close();
-        ConcreteObservable.getINSTANCE().notifyObservers(task);
+        ConcreteObservable.getINSTANCE().notifyObservers(task, Request.UPDATE);
     }
 
 

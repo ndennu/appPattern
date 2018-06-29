@@ -14,11 +14,10 @@
 
 - Memento : cancel edition
 
+- Iterator : for loop (not used)
+
 ## Pattern Soon
 
 - Command : request Database
 
 - composite : tree Project > Task > SubTask
-
-- Iterator : for loop
-

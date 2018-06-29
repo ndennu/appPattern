@@ -29,7 +29,7 @@ public class PrototypeFactory {
         prototypes.put(Subtask.class, new Subtask.Builder().text("New subTask").build());
     }
 
-    public static Object getPrototypes(Type t) {
+    public Object getPrototypes(Type t) {
 
         if (prototypes.containsKey(t))
             return prototypes.get(t);

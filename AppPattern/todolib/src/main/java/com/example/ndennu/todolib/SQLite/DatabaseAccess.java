@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.example.ndennu.todolib.Observer.ConcreteObservable;
 import com.example.ndennu.todolib.model.Project;
 import com.example.ndennu.todolib.model.Subtask;
 import com.example.ndennu.todolib.model.Task;
@@ -40,8 +41,7 @@ public class DatabaseAccess {
      */
     public int insertProject(Project project){
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
-        db.execSQL("INSERT INTO project VALUES (" +
-                project.getId() + ", \"" +
+        db.execSQL("INSERT INTO project(text) VALUES (\"" +
                 project.getText() + "\")");
 
         Cursor cursor = db.rawQuery("SELECT last_insert_rowid()", null);
@@ -52,9 +52,10 @@ public class DatabaseAccess {
         cursor.close();
         db.close();
 
+        ConcreteObservable.getINSTANCE().notifyObservers(id);
+
         return id;
     }
-
 
     /**
      * Insert task

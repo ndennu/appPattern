@@ -45,6 +45,7 @@ public class SubtaskActivity extends AppCompatActivity implements Observer<Subta
 
         fetchAllSubtask(idTask, idProject);
         initUI();
+        setTitle(taskParent.getText());
     }
 
     @OnClick(R.id.add_subtask)

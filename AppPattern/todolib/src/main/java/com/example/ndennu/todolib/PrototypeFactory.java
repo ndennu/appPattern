@@ -1,7 +1,5 @@
 package com.example.ndennu.todolib;
 
-import android.util.Log;
-
 import com.example.ndennu.todolib.model.Project;
 import com.example.ndennu.todolib.model.Subtask;
 import com.example.ndennu.todolib.model.Task;

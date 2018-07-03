@@ -48,6 +48,7 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
         int idProject = getIntent().getIntExtra(ID_PROJECT, 1);
 
         fetchAllTaskFromProject(idProject);
+        setTitle(projectParent.getText());
         taskAdapter = new TaskAdapter(projectParent.getTasks());
         setOnClickItem();
         setOnClickImg();

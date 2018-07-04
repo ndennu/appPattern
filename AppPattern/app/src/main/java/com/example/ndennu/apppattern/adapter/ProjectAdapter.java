@@ -52,7 +52,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Project p = projectList.get(position);
-
+        holder.task.setText(String.format("%s task(s)", Integer.toString(p.getTasks().size())));
         holder.titleProject.setText(p.getText());
         holder.editProject.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +87,8 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
         ImageView editProject;
         @BindView(R.id.img_delete)
         ImageView deleteProject;
+        @BindView(R.id.number_task)
+        TextView task;
 
         public ViewHolder(View itemView) {
             super(itemView);

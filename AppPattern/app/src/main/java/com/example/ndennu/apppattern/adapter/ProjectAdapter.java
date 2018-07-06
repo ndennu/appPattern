@@ -45,27 +45,31 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.item_project, parent, false);
+                .inflate(R.layout.item_list, parent, false);
         return new ViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Project p = projectList.get(position);
-        holder.task.setText(String.format("%s task(s)", Integer.toString(p.getTasks().size())));
-        holder.titleProject.setText(p.getText());
-        holder.editProject.setOnClickListener(new View.OnClickListener() {
+
+        holder.nbTaskTxt.setText(String.format("%s task(s)", Integer.toString(p.getTasks().size())));
+        holder.titleTxt.setText(p.getText());
+
+        holder.editImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (editListener != null) editListener.onImageClick(p);
             }
         });
-        holder.deleteProject.setOnClickListener(new View.OnClickListener() {
+
+        holder.deleteImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (deleteListener != null) deleteListener.onTrashClick(p);
             }
         });
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,14 +85,14 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.title_project)
-        TextView titleProject;
+        @BindView(R.id.title)
+        TextView titleTxt;
         @BindView(R.id.img_edit)
-        ImageView editProject;
+        ImageView editImg;
         @BindView(R.id.img_delete)
-        ImageView deleteProject;
+        ImageView deleteImg;
         @BindView(R.id.number_task)
-        TextView task;
+        TextView nbTaskTxt;
 
         public ViewHolder(View itemView) {
             super(itemView);

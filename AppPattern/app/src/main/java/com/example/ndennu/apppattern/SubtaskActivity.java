@@ -1,7 +1,8 @@
 package com.example.ndennu.apppattern;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.TextView;
@@ -30,9 +31,12 @@ public class SubtaskActivity extends AppCompatActivity implements Observer<Subta
 
     private SubtaskAdapter adapter;
 
-    @BindView(R.id.title_project) TextView projectTxt;
-    @BindView(R.id.title_task) TextView taskTxt;
-    @BindView(R.id.recyclerView) RecyclerView recyclerView;
+    @BindView(R.id.title_project)
+    TextView projectTxt;
+    @BindView(R.id.title_task)
+    TextView taskTxt;
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,7 @@ public class SubtaskActivity extends AppCompatActivity implements Observer<Subta
         taskTxt.setText(taskParent.getText());
 
         adapter = new SubtaskAdapter(taskParent.getSubtasks());
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }
 
@@ -72,7 +77,7 @@ public class SubtaskActivity extends AppCompatActivity implements Observer<Subta
             for (int i = 0; i < taskParent.getSubtasks().size(); i++) {
                 if (taskParent.getSubtasks().get(i).getId() == subtask.getId()) {
                     taskParent.getSubtasks().get(i).setText(subtask.getText());
-//                taskAdapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
                     ConcreteObservable.getINSTANCE().removeObsever(SubtaskActivity.this);
                     return;
                 }
@@ -84,8 +89,8 @@ public class SubtaskActivity extends AppCompatActivity implements Observer<Subta
 
         if (Request.DELETE == request)
             taskParent.remove(subtask);
-//        taskAdapter.notifyDataSetChanged();
 
+        adapter.notifyDataSetChanged();
         ConcreteObservable.getINSTANCE().removeObsever(SubtaskActivity.this);
     }
 
@@ -93,4 +98,73 @@ public class SubtaskActivity extends AppCompatActivity implements Observer<Subta
         projectParent = DatabaseAccess.getInstance(SubtaskActivity.this).getProjectById(projectId, false);
         taskParent = DatabaseAccess.getInstance(SubtaskActivity.this).getTaskById(idTask);
     }
+
+    // TODO: @POICET implement memento & facade pour delete
+
+    /*
+
+    private void setOnClickImg() {
+        adapter.setEditListener(new SubtaskAdapter.EditListener() {
+
+            @Override
+            public void onImageClick(final Subtask subtask) {
+                final TodoObjectStateMemory memory = new TodoObjectStateMemory();
+                memory.setMemento(subtask.getMemento());
+                LayoutInflater inflater = SubtaskActivity.this.getLayoutInflater();
+                final View v = inflater.inflate(R.layout.popup_edit, null);
+                ((EditText) v.findViewById(R.id.edit_text)).setText(subtask.getText());
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(SubtaskActivity.this)
+                        .setTitle("Edit")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                subtask.setText(((EditText) v.findViewById(R.id.edit_text)).getText().toString());
+
+                                ConcreteObservable.getINSTANCE().addObserver(SubtaskActivity.this);
+                                DatabaseAccess.getInstance(SubtaskActivity.this).updateTask(subtask);
+                            }
+                        })
+                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                subtask.retoreMemento(memory.getMemento());
+                            }
+                        });
+                alert.setView(v);
+                alert.show();
+            }
+        });
+    }
+
+    private void setOnClickTrash() {
+
+        adapter.setDeleteListener(new SubtaskAdapter.DeleteListener() {
+            @Override
+            public void onImageTrashClick(final Subtask subtask) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(SubtaskActivity.this)
+                        .setTitle("Delete")
+                        .setView(R.layout.popup_delete)
+                        .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ConcreteObservable.getINSTANCE().addObserver(SubtaskActivity.this);
+                                if (DatabaseFacade.deleteTask(SubtaskActivity.this, subtask, projectParent.getId())) {
+                                    ConcreteObservable.getINSTANCE().notifyObservers(task, Request.DELETE);
+                                }
+
+                            }
+                        })
+                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                return;
+                            }
+                        });
+                alert.show();
+            }
+        });
+    }
+
+    */
 }

@@ -31,6 +31,7 @@ public class SubtaskAdapter extends RecyclerView.Adapter<SubtaskAdapter.ViewHold
     public void setEditListener(EditListener editListener) {
         this.editListener = editListener;
     }
+
     public void setDeleteListener(DeleteListener deleteListener) {
         this.deleteListener = deleteListener;
     }
@@ -40,7 +41,7 @@ public class SubtaskAdapter extends RecyclerView.Adapter<SubtaskAdapter.ViewHold
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.item_task, parent, false);
+                .inflate(R.layout.item_list, parent, false);
         return new ViewHolder(itemView);
     }
 
@@ -48,14 +49,14 @@ public class SubtaskAdapter extends RecyclerView.Adapter<SubtaskAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Subtask subtask = this.subtasks.get(position);
 
-        holder.titleTask.setText(subtask.getText());
-        holder.deleteTask.setOnClickListener(new View.OnClickListener() {
+        holder.titleTxt.setText(subtask.getText());
+        holder.deleteImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (deleteListener != null) deleteListener.onImageTrashClick(subtask);
             }
         });
-        holder.editTask.setOnClickListener(new View.OnClickListener() {
+        holder.editImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (editListener != null) editListener.onImageClick(subtask);
@@ -70,9 +71,12 @@ public class SubtaskAdapter extends RecyclerView.Adapter<SubtaskAdapter.ViewHold
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.title_task) TextView titleTask;
-        @BindView(R.id.img_edit_task) ImageView editTask;
-        @BindView(R.id.img_delete_task) ImageView deleteTask;
+        @BindView(R.id.title)
+        TextView titleTxt;
+        @BindView(R.id.img_edit)
+        ImageView editImg;
+        @BindView(R.id.img_delete)
+        ImageView deleteImg;
 
         public ViewHolder(View itemView) {
             super(itemView);

@@ -53,7 +53,11 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Project p = projectList.get(position);
 
-        holder.nbTaskTxt.setText(String.format("%s task(s)", Integer.toString(p.getTasks().size())));
+        if (p.getTasks() == null)
+            holder.nbTaskTxt.setText(String.format("%s task(s)", 0));
+        else
+            holder.nbTaskTxt.setText(String.format("%s task(s)", Integer.toString(p.getTasks().size())));
+
         holder.titleTxt.setText(p.getText());
 
         holder.editImg.setOnClickListener(new View.OnClickListener() {

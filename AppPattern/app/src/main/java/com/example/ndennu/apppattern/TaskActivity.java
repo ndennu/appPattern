@@ -71,23 +71,23 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
     public void update(Task task, Request request) {
         if (Request.UPDATE == request) {
             for (int i = 0; i < projectParent.getTasks().size(); i++) {
-                if (projectParent.getTasks().get(i).getId() == task.getId()) {
+                if (projectParent.getTasks().get(i).getId() == task.getId())
                     projectParent.getTasks().get(i).setText(task.getText());
-                    taskAdapter.notifyDataSetChanged();
-                    ConcreteObservable.getINSTANCE().removeObsever(TaskActivity.this);
-                    return;
-                }
             }
         }
 
-        if (Request.INSERT == request)
+        if (Request.INSERT == request) {
             projectParent.add(task);
+            taskAdapter.notifyDataSetChanged();
+            openPopup(task);
+        }
 
         if (Request.DELETE == request)
             projectParent.remove(task);
 
-        taskAdapter.notifyDataSetChanged();
+
         ConcreteObservable.getINSTANCE().removeObsever(TaskActivity.this);
+        taskAdapter.notifyDataSetChanged();
     }
 
     private void fetchAllTaskFromProject(int idProject) {
@@ -109,31 +109,7 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
         taskAdapter.setEditListener(new TaskAdapter.EditListener() {
             @Override
             public void onImageClick(final Task task) {
-                final TodoObjectStateMemory memory = new TodoObjectStateMemory();
-                memory.setMemento(task.getMemento());
-                LayoutInflater inflater = TaskActivity.this.getLayoutInflater();
-                final View v = inflater.inflate(R.layout.popup_edit, null);
-                ((EditText) v.findViewById(R.id.edit_text)).setText(task.getText());
-
-                AlertDialog.Builder alert = new AlertDialog.Builder(TaskActivity.this)
-                        .setTitle("Edit")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                task.setText(((EditText) v.findViewById(R.id.edit_text)).getText().toString());
-
-                                ConcreteObservable.getINSTANCE().addObserver(TaskActivity.this);
-                                DatabaseAccess.getInstance(TaskActivity.this).updateTask(task);
-                            }
-                        })
-                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                task.retoreMemento(memory.getMemento());
-                            }
-                        });
-                alert.setView(v);
-                alert.show();
+                openPopup(task);
             }
         });
     }
@@ -165,5 +141,33 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
                 alert.show();
             }
         });
+    }
+
+    private void openPopup(final Task task) {
+        final TodoObjectStateMemory memory = new TodoObjectStateMemory();
+        memory.setMemento(task.getMemento());
+        LayoutInflater inflater = TaskActivity.this.getLayoutInflater();
+        final View v = inflater.inflate(R.layout.popup_edit, null);
+        ((EditText) v.findViewById(R.id.edit_text)).setText(task.getText());
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(TaskActivity.this)
+                .setTitle("Edit")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        task.setText(((EditText) v.findViewById(R.id.edit_text)).getText().toString());
+
+                        ConcreteObservable.getINSTANCE().addObserver(TaskActivity.this);
+                        DatabaseAccess.getInstance(TaskActivity.this).updateTask(task);
+                    }
+                })
+                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        task.retoreMemento(memory.getMemento());
+                    }
+                });
+        alert.setView(v);
+        alert.show();
     }
 }

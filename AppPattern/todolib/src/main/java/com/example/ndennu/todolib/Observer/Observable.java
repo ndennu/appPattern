@@ -12,7 +12,8 @@ public abstract class Observable<T> {
     protected List<Observer<T>> observers = new ArrayList<>();
 
     public void addObserver(Observer<T> observer) {
-        observers.add(observer);
+        if (!observers.contains(observer))
+            observers.add(observer);
     }
 
     public void removeObsever(Observer<T> observer) {

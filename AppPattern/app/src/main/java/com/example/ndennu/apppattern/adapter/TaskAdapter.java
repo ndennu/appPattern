@@ -51,10 +51,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Task t = taskList.get(position);
-        if (t.getSubtasks() == null )
-            holder.nbTaskTxt.setText(String.format("%s subtask(s)", 0));
-        else
-            holder.nbTaskTxt.setText(String.format("%s subtask(s)", Integer.toString(t.getSubtasks().size())));
+        holder.nbTaskTxt.setText(String.format("%s subtask(s)", Integer.toString(t.getSubtasks().size())));
 
         holder.titleTxt.setText(t.getText());
 

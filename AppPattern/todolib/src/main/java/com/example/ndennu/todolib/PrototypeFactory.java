@@ -11,15 +11,6 @@ public class PrototypeFactory {
 
     private static HashMap<Type, Object> prototypes = new HashMap<>();
 
-    private static PrototypeFactory INSTANCE;
-
-    /*public static PrototypeFactory getInstance() {
-        if(INSTANCE == null){
-            INSTANCE = new PrototypeFactory();
-        }
-        return INSTANCE;
-    }*/
-
     public PrototypeFactory() {
 
         prototypes.put(Project.class, new Project.Builder().text("New project").build());

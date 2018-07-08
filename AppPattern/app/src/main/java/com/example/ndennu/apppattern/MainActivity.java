@@ -75,14 +75,20 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
                 }
             }
         }
-        if (Request.INSERT == request)
+
+        if (Request.INSERT == request) {
             projects.add(project);
+            projectAdapter.notifyDataSetChanged();
+            openPopup(project);
+        }
+
 
         if (Request.DELETE == request)
             projects.remove(project);
 
-        projectAdapter.notifyDataSetChanged();
+
         ConcreteObservable.getINSTANCE().removeObsever(MainActivity.this);
+        projectAdapter.notifyDataSetChanged();
     }
 
     private void fetchAllProject() {
@@ -104,32 +110,7 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
         projectAdapter.setEditListener(new ProjectAdapter.EditListener() {
             @Override
             public void onImageClick(final Project project) {
-                final TodoObjectStateMemory memory = new TodoObjectStateMemory();
-                memory.setMemento(project.getMemento());
-
-                LayoutInflater inflater = MainActivity.this.getLayoutInflater();
-                final View v = inflater.inflate(R.layout.popup_edit, null);
-                ((EditText) v.findViewById(R.id.edit_text)).setText(project.getText());
-
-                AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("Edit")
-                        .setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                project.setText(((EditText) v.findViewById(R.id.edit_text)).getText().toString());
-
-                                ConcreteObservable.getINSTANCE().addObserver(MainActivity.this);
-                                DatabaseAccess.getInstance(MainActivity.this).updateProject(project);
-                            }
-                        })
-                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                project.retoreMemento(memory.getMemento());
-                            }
-                        });
-                alert.setView(v);
-                alert.show();
+                openPopup(project);
             }
         });
     }
@@ -161,5 +142,34 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
                 alert.show();
             }
         });
+    }
+
+    private void openPopup(final Project project) {
+        final TodoObjectStateMemory memory = new TodoObjectStateMemory();
+        memory.setMemento(project.getMemento());
+
+        LayoutInflater inflater = MainActivity.this.getLayoutInflater();
+        final View v = inflater.inflate(R.layout.popup_edit, null);
+        ((EditText) v.findViewById(R.id.edit_text)).setText(project.getText());
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this)
+                .setTitle("Edit")
+                .setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        project.setText(((EditText) v.findViewById(R.id.edit_text)).getText().toString());
+
+                        ConcreteObservable.getINSTANCE().addObserver(MainActivity.this);
+                        DatabaseAccess.getInstance(MainActivity.this).updateProject(project);
+                    }
+                })
+                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        project.retoreMemento(memory.getMemento());
+                    }
+                });
+        alert.setView(v);
+        alert.show();
     }
 }

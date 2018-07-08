@@ -5,6 +5,7 @@ import com.example.ndennu.todolib.iterator.IIterator;
 import com.example.ndennu.todolib.memento.TodoObjectMemento;
 import com.example.ndennu.todolib.memento.TodoObjectState;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Task extends TodoObject implements IClonable<Task> {
@@ -78,6 +79,7 @@ public class Task extends TodoObject implements IClonable<Task> {
         private List<Subtask> subtasks;
 
         public Builder() {
+            subtasks = new ArrayList<>();
         }
 
         public Builder id(int val) {

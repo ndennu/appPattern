@@ -1,10 +1,13 @@
 package com.example.ndennu.todolib.model;
 
 import com.example.ndennu.todolib.composite.TodoObject;
+import com.example.ndennu.todolib.memento.TodoObjectMemento;
+import com.example.ndennu.todolib.memento.TodoObjectState;
 
 public class Subtask extends TodoObject implements IClonable<Subtask> {
     private int id;
     private String text;
+    private TodoObjectState state = TodoObjectState.NEW;
 
     private Subtask(Builder builder) {
         super(builder.text);
@@ -25,6 +28,7 @@ public class Subtask extends TodoObject implements IClonable<Subtask> {
     }
 
     public void setText(String text) {
+        this.state = TodoObjectState.CHANGED;
         this.text = text;
     }
 
@@ -67,5 +71,14 @@ public class Subtask extends TodoObject implements IClonable<Subtask> {
         public Subtask build() {
             return new Subtask(this);
         }
+    }
+
+    public TodoObjectMemento getMemento() {
+        return new TodoObjectMemento(text, state);
+    }
+
+    public void restoreMemento(TodoObjectMemento memento) {
+        this.text = memento.getText();
+        this.state = memento.getState();
     }
 }

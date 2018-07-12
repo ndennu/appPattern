@@ -1,10 +1,15 @@
 package com.example.ndennu.apppattern;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.ndennu.apppattern.adapter.SubtaskAdapter;
@@ -12,7 +17,9 @@ import com.example.ndennu.todolib.Observer.ConcreteObservable;
 import com.example.ndennu.todolib.Observer.Observer;
 import com.example.ndennu.todolib.PrototypeFactory;
 import com.example.ndennu.todolib.SQLite.DatabaseAccess;
+import com.example.ndennu.todolib.SQLite.DatabaseFacade;
 import com.example.ndennu.todolib.SQLite.Request;
+import com.example.ndennu.todolib.memento.TodoObjectStateMemory;
 import com.example.ndennu.todolib.model.Project;
 import com.example.ndennu.todolib.model.Subtask;
 import com.example.ndennu.todolib.model.Task;
@@ -50,6 +57,8 @@ public class SubtaskActivity extends AppCompatActivity implements Observer<Subta
         fetchAllSubtask(idTask, idProject);
         initUI();
         setTitle(taskParent.getText());
+        setOnClickImg();
+        setOnClickTrash();
     }
 
     @OnClick(R.id.add_subtask)
@@ -101,7 +110,7 @@ public class SubtaskActivity extends AppCompatActivity implements Observer<Subta
 
     // TODO: @POICET implement memento & facade pour delete
 
-    /*
+
 
     private void setOnClickImg() {
         adapter.setEditListener(new SubtaskAdapter.EditListener() {
@@ -122,13 +131,13 @@ public class SubtaskActivity extends AppCompatActivity implements Observer<Subta
                                 subtask.setText(((EditText) v.findViewById(R.id.edit_text)).getText().toString());
 
                                 ConcreteObservable.getINSTANCE().addObserver(SubtaskActivity.this);
-                                DatabaseAccess.getInstance(SubtaskActivity.this).updateTask(subtask);
+                                DatabaseAccess.getInstance(SubtaskActivity.this).updateSubtask(subtask);
                             }
                         })
                         .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                subtask.retoreMemento(memory.getMemento());
+                                subtask.restoreMemento(memory.getMemento());
                             }
                         });
                 alert.setView(v);
@@ -149,9 +158,9 @@ public class SubtaskActivity extends AppCompatActivity implements Observer<Subta
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 ConcreteObservable.getINSTANCE().addObserver(SubtaskActivity.this);
-                                if (DatabaseFacade.deleteTask(SubtaskActivity.this, subtask, projectParent.getId())) {
-                                    ConcreteObservable.getINSTANCE().notifyObservers(task, Request.DELETE);
-                                }
+                                /*if (DatabaseFacade.deleteTask(SubtaskActivity.this, subtask, projectParent.getId())) {
+                                    ConcreteObservable.getINSTANCE().notifyObservers(subtask, Request.DELETE);
+                                }*/
 
                             }
                         })
@@ -166,5 +175,4 @@ public class SubtaskActivity extends AppCompatActivity implements Observer<Subta
         });
     }
 
-    */
 }

@@ -373,5 +373,6 @@ public class DatabaseAccess {
         SQLiteDatabase db = mySQLiteOpenHelper.getWritableDatabase();
         db.execSQL("UPDATE subtask SET text = \"" + subtask.getText() + "\" WHERE id = " + subtask.getId());
         db.close();
+        ConcreteObservable.getINSTANCE().notifyObservers(subtask, Request.UPDATE);
     }
 }

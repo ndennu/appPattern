@@ -7,7 +7,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
                 if (projects.get(i).getId() == project.getId()) {
                     projects.get(i).setText(project.getText());
                     projectAdapter.notifyDataSetChanged();
-                    ConcreteObservable.getINSTANCE().removeObsever(MainActivity.this);
+                    ConcreteObservable.getINSTANCE().removeObserver(MainActivity.this);
                     return;
                 }
             }
@@ -102,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
             projects.remove(project);
 
 
-        ConcreteObservable.getINSTANCE().removeObsever(MainActivity.this);
+        ConcreteObservable.getINSTANCE().removeObserver(MainActivity.this);
         projectAdapter.notifyDataSetChanged();
     }
 

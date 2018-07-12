@@ -10,25 +10,22 @@ import com.example.ndennu.todolib.model.Project;
 import com.example.ndennu.todolib.model.Subtask;
 import com.example.ndennu.todolib.model.Task;
 
-import java.util.List;
-
 public class DatabaseFacade {
 
     /**
      * Delete project
+     *
      * @param context Context
      * @param project Project to delete
      * @return True if successfully deleted, else False
      */
-    public static boolean deleteProject(Context context, Project project){
+    public static boolean deleteProject(Context context, Project project) {
         DatabaseManager databaseManager = new DatabaseManager();
 
-        List<Task> tasks = project.getTasks();
-
-        for (IIterator<Task> taskIterator = project.getIterator(); taskIterator.hasNext();) {
+        for (IIterator<Task> taskIterator = project.getIterator(); taskIterator.hasNext(); ) {
             Task task = taskIterator.next();
 
-            for(IIterator<Subtask> subtaskIterator = task.getIterator(); subtaskIterator.hasNext();){
+            for (IIterator<Subtask> subtaskIterator = task.getIterator(); subtaskIterator.hasNext(); ) {
                 databaseManager.AddCommand(new DeleteSubtask(context, subtaskIterator.next(), task.getId()));
             }
 
@@ -43,15 +40,16 @@ public class DatabaseFacade {
 
     /**
      * Delete task
-     * @param context Context
-     * @param task Task to delete
+     *
+     * @param context    Context
+     * @param task       Task to delete
      * @param project_id Project id
      * @return True if successfully deleted, else False
      */
-    public static boolean deleteTask(Context context, Task task, int project_id){
+    public static boolean deleteTask(Context context, Task task, int project_id) {
         DatabaseManager databaseManager = new DatabaseManager();
 
-        for(IIterator<Subtask> subtaskIterator = task.getIterator(); subtaskIterator.hasNext();){
+        for (IIterator<Subtask> subtaskIterator = task.getIterator(); subtaskIterator.hasNext(); ) {
             databaseManager.AddCommand(new DeleteSubtask(context, subtaskIterator.next(), task.getId()));
         }
 

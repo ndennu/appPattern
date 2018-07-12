@@ -17,7 +17,6 @@ import com.example.ndennu.todolib.Observer.ConcreteObservable;
 import com.example.ndennu.todolib.Observer.Observer;
 import com.example.ndennu.todolib.PrototypeFactory;
 import com.example.ndennu.todolib.SQLite.DatabaseAccess;
-import com.example.ndennu.todolib.SQLite.DatabaseFacade;
 import com.example.ndennu.todolib.SQLite.Request;
 import com.example.ndennu.todolib.memento.TodoObjectStateMemory;
 import com.example.ndennu.todolib.model.Project;
@@ -87,7 +86,7 @@ public class SubtaskActivity extends AppCompatActivity implements Observer<Subta
                 if (taskParent.getSubtasks().get(i).getId() == subtask.getId()) {
                     taskParent.getSubtasks().get(i).setText(subtask.getText());
                     adapter.notifyDataSetChanged();
-                    ConcreteObservable.getINSTANCE().removeObsever(SubtaskActivity.this);
+                    ConcreteObservable.getINSTANCE().removeObserver(SubtaskActivity.this);
                     return;
                 }
             }
@@ -100,7 +99,7 @@ public class SubtaskActivity extends AppCompatActivity implements Observer<Subta
             taskParent.remove(subtask);
 
         adapter.notifyDataSetChanged();
-        ConcreteObservable.getINSTANCE().removeObsever(SubtaskActivity.this);
+        ConcreteObservable.getINSTANCE().removeObserver(SubtaskActivity.this);
     }
 
     public void fetchAllSubtask(int idTask, int projectId) {
@@ -158,17 +157,13 @@ public class SubtaskActivity extends AppCompatActivity implements Observer<Subta
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 ConcreteObservable.getINSTANCE().addObserver(SubtaskActivity.this);
-                                /*if (DatabaseFacade.deleteTask(SubtaskActivity.this, subtask, projectParent.getId())) {
-                                    ConcreteObservable.getINSTANCE().notifyObservers(subtask, Request.DELETE);
-                                }*/
-
+                                DatabaseAccess.getInstance(SubtaskActivity.this).deleteSubtask(subtask.getId());
+                                ConcreteObservable.getINSTANCE().notifyObservers(subtask, Request.DELETE);
                             }
                         })
                         .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                return;
-                            }
+                            public void onClick(DialogInterface dialogInterface, int i) {}
                         });
                 alert.show();
             }

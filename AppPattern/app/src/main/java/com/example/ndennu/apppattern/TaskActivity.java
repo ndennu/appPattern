@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
-import com.example.ndennu.apppattern.adapter.ProjectAdapter;
 import com.example.ndennu.apppattern.adapter.TaskAdapter;
 import com.example.ndennu.todolib.Observer.ConcreteObservable;
 import com.example.ndennu.todolib.Observer.Observer;
@@ -77,7 +76,7 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
             projectParent.remove(task);
 
 
-        ConcreteObservable.getINSTANCE().removeObsever(TaskActivity.this);
+        ConcreteObservable.getINSTANCE().removeObserver(TaskActivity.this);
         taskAdapter.notifyDataSetChanged();
     }
 

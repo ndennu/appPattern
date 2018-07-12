@@ -31,6 +31,7 @@ import butterknife.OnClick;
 public class TaskActivity extends AppCompatActivity implements Observer<Task> {
 
     public static String ID_PROJECT = "ID_PROJECT";
+    public static int ITEM_REQUEST_CODE = 1449;
 
     @BindView(R.id.recycler_task)
     RecyclerView recyclerTask;
@@ -43,28 +44,18 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
         ButterKnife.bind(this);
+
         recyclerTask.setLayoutManager(new LinearLayoutManager(this));
-
-        int idProject = getIntent().getIntExtra(ID_PROJECT, 1);
-
-        fetchAllTaskFromProject(idProject);
-        setTitle(projectParent.getText());
-        taskAdapter = new TaskAdapter(projectParent.getTasks());
-        setOnClickItem();
-        setOnClickImg();
-        setOnClickTrash();
-
-        recyclerTask.setAdapter(taskAdapter);
+        initList(getIntent().getIntExtra(ID_PROJECT, 1));
     }
 
-    @OnClick(R.id.add_task)
-    public void addTask() {
-        Task t = (Task) new PrototypeFactory().getPrototypes(Task.class);
-        if (t == null) {
-            Log.e("INSERT_TASK", "ERROR INSERT TASK");
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == ITEM_REQUEST_CODE) {
+            initList(projectParent.getId());
         }
-        ConcreteObservable.getINSTANCE().addObserver(TaskActivity.this);
-        DatabaseAccess.getInstance(TaskActivity.this).insertTask(projectParent.getId(), t);
     }
 
     @Override
@@ -90,6 +81,26 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
         taskAdapter.notifyDataSetChanged();
     }
 
+    @OnClick(R.id.add_task)
+    public void addTask() {
+        Task t = (Task) new PrototypeFactory().getPrototypes(Task.class);
+        if (t == null) {
+            Log.e("INSERT_TASK", "ERROR INSERT TASK");
+        }
+        ConcreteObservable.getINSTANCE().addObserver(TaskActivity.this);
+        DatabaseAccess.getInstance(TaskActivity.this).insertTask(projectParent.getId(), t);
+    }
+
+    private void initList(int idProject) {
+        fetchAllTaskFromProject(idProject);
+        setTitle(projectParent.getText());
+        taskAdapter = new TaskAdapter(projectParent.getTasks());
+        setOnClickItem();
+        setOnClickImg();
+        setOnClickTrash();
+        recyclerTask.setAdapter(taskAdapter);
+    }
+
     private void fetchAllTaskFromProject(int idProject) {
         projectParent = DatabaseAccess.getInstance(TaskActivity.this).getProjectById(idProject);
     }
@@ -100,7 +111,7 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
             public void onGenreClick(Task task) {
                 Intent intent = new Intent(TaskActivity.this, SubtaskActivity.class);
                 intent.putExtra(SubtaskActivity.ID_TASK, task.getId());
-                startActivity(intent);
+                startActivityForResult(intent, ITEM_REQUEST_CODE);
             }
         });
     }

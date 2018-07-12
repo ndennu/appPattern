@@ -37,30 +37,45 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
     private List<Project> projects;
     private ProjectAdapter projectAdapter;
 
+    public static int ITEM_REQUEST_CODE = 1503;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
         recyclerProject.setLayoutManager(new LinearLayoutManager(this));
 
-        fetchAllProject();
-        projectAdapter = new ProjectAdapter(projects);
-        setOnClickItem();
-        setOnClickImg();
-        setOnClickTrash();
-
-        recyclerProject.setAdapter(projectAdapter);
+        initList();
     }
 
-    @OnClick(R.id.add_project)
-    public void addProject() {
-        Project p = (Project) new PrototypeFactory().getPrototypes(Project.class);
-        if (p == null) {
-            Log.e("INSERT_PROJECT", "ERROR INSERT PROJECT");
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle("Do you want to leave app ?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        MainActivity.super.onBackPressed();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == ITEM_REQUEST_CODE) {
+            initList();
         }
-        ConcreteObservable.getINSTANCE().addObserver(MainActivity.this);
-        DatabaseAccess.getInstance(MainActivity.this).insertProject(p);
     }
 
     @Override
@@ -91,6 +106,25 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
         projectAdapter.notifyDataSetChanged();
     }
 
+    @OnClick(R.id.add_project)
+    public void addProject() {
+        Project p = (Project) new PrototypeFactory().getPrototypes(Project.class);
+        if (p == null) {
+            Log.e("INSERT_PROJECT", "ERROR INSERT PROJECT");
+        }
+        ConcreteObservable.getINSTANCE().addObserver(MainActivity.this);
+        DatabaseAccess.getInstance(MainActivity.this).insertProject(p);
+    }
+
+    private void initList() {
+        fetchAllProject();
+        projectAdapter = new ProjectAdapter(projects);
+        setOnClickItem();
+        setOnClickImg();
+        setOnClickTrash();
+        recyclerProject.setAdapter(projectAdapter);
+    }
+
     private void fetchAllProject() {
         projects = DatabaseAccess.getInstance(MainActivity.this).getAllProjects();
     }
@@ -101,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
             public void onGenreClick(Project project) {
                 Intent intent = new Intent(MainActivity.this, TaskActivity.class);
                 intent.putExtra(TaskActivity.ID_PROJECT, project.getId());
-                startActivity(intent);
+                startActivityForResult(intent, ITEM_REQUEST_CODE);
             }
         });
     }
@@ -135,9 +169,7 @@ public class MainActivity extends AppCompatActivity implements Observer<Project>
                         })
                         .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                return;
-                            }
+                            public void onClick(DialogInterface dialogInterface, int i) {}
                         });
                 alert.show();
             }

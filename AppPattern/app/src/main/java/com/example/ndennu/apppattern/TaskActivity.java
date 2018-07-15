@@ -7,12 +7,14 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
 import com.example.ndennu.apppattern.adapter.TaskAdapter;
+import com.example.ndennu.apppattern.adapter.TodoViewHolder;
 import com.example.ndennu.todolib.Observer.ConcreteObservable;
 import com.example.ndennu.todolib.Observer.Observer;
 import com.example.ndennu.todolib.PrototypeFactory;
@@ -27,7 +29,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class TaskActivity extends AppCompatActivity implements Observer<Task> {
+public class TaskActivity extends AppCompatActivity implements Observer<Task>,
+        TodoItemTouchHelper.TodoItemTouchHelperListener {
 
     public static String ID_PROJECT = "ID_PROJECT";
     public static int ITEM_REQUEST_CODE = 1449;
@@ -96,7 +99,6 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
         taskAdapter = new TaskAdapter(projectParent.getTasks());
         setOnClickItem();
         setOnClickImg();
-        setOnClickTrash();
         recyclerTask.setAdapter(taskAdapter);
     }
 
@@ -105,9 +107,12 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
     }
 
     private void setOnClickItem() {
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new TodoItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerTask);
+
         taskAdapter.setListener(new TaskAdapter.Listener() {
             @Override
-            public void onGenreClick(Task task) {
+            public void onClick(Task task) {
                 Intent intent = new Intent(TaskActivity.this, SubtaskActivity.class);
                 intent.putExtra(SubtaskActivity.ID_TASK, task.getId());
                 startActivityForResult(intent, ITEM_REQUEST_CODE);
@@ -118,37 +123,8 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
     private void setOnClickImg() {
         taskAdapter.setEditListener(new TaskAdapter.EditListener() {
             @Override
-            public void onImageClick(final Task task) {
+            public void onEdit(final Task task) {
                 openPopup(task);
-            }
-        });
-    }
-
-    private void setOnClickTrash() {
-
-        taskAdapter.setDeleteListener(new TaskAdapter.DeleteListener() {
-            @Override
-            public void onImageTrashClick(final Task task) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(TaskActivity.this)
-                        .setTitle("Delete")
-                        .setView(R.layout.popup_delete)
-                        .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                ConcreteObservable.getINSTANCE().addObserver(TaskActivity.this);
-                                if (DatabaseFacade.deleteTask(TaskActivity.this, task, projectParent.getId())) {
-                                    ConcreteObservable.getINSTANCE().notifyObservers(task, Request.DELETE);
-                                }
-
-                            }
-                        })
-                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                return;
-                            }
-                        });
-                alert.show();
             }
         });
     }
@@ -179,5 +155,26 @@ public class TaskActivity extends AppCompatActivity implements Observer<Task> {
                 });
         alert.setView(v);
         alert.show();
+    }
+
+    @Override
+    public void onSwiped(TodoViewHolder viewHolder, int direction, final int position) {
+        new AlertDialog.Builder(TaskActivity.this)
+                .setTitle("Delete")
+                .setMessage("Are you sur want to delete ?")
+                .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        ConcreteObservable.getINSTANCE().addObserver(TaskActivity.this);
+                        if (DatabaseFacade.deleteTask(TaskActivity.this, taskAdapter.getTaskList().get(position), projectParent.getId())) {
+                            ConcreteObservable.getINSTANCE().notifyObservers(taskAdapter.getTaskList().get(position), Request.DELETE);
+                        }
+                    }
+                })
+                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {}
+                })
+                .show();
     }
 }

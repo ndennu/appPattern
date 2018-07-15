@@ -1,6 +1,7 @@
 package com.example.ndennu.apppattern.adapter;
 
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +23,6 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
     private List<Project> projectList;
     private Listener listener;
     private EditListener editListener;
-    private DeleteListener deleteListener;
 
     public ProjectAdapter(List<Project> projectList) {
         this.projectList = projectList;
@@ -36,8 +36,8 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
         this.editListener = editListener;
     }
 
-    public void setDeleteListener(DeleteListener deleteListener) {
-        this.deleteListener = deleteListener;
+    public List<Project> getProjectList() {
+        return projectList;
     }
 
     @NonNull
@@ -60,21 +60,14 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
         holder.editImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (editListener != null) editListener.onImageClick(p);
-            }
-        });
-
-        holder.deleteImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (deleteListener != null) deleteListener.onTrashClick(p);
+                if (editListener != null) editListener.onEdit(p);
             }
         });
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (listener != null) listener.onGenreClick(p);
+                if (listener != null) listener.onClick(p);
             }
         });
     }
@@ -84,32 +77,31 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
         return projectList.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends TodoViewHolder {
 
         @BindView(R.id.title)
         TextView titleTxt;
         @BindView(R.id.img_edit)
         ImageView editImg;
-        @BindView(R.id.img_delete)
-        ImageView deleteImg;
         @BindView(R.id.number_task)
         TextView nbTaskTxt;
+
+        @BindView(R.id.card_view)
+        public View card_view;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            super.card_view = card_view;
         }
     }
 
     public interface Listener {
-        void onGenreClick(Project project);
+        void onClick(Project project);
     }
 
     public interface EditListener {
-        void onImageClick(Project project);
-    }
-
-    public interface DeleteListener {
-        void onTrashClick(Project project);
+        void onEdit(Project project);
     }
 }

@@ -19,10 +19,7 @@ import butterknife.ButterKnife;
 public class SubtaskAdapter extends RecyclerView.Adapter<SubtaskAdapter.ViewHolder> {
 
     private List<Subtask> subtasks;
-
-
     private EditListener editListener;
-    private DeleteListener deleteListener;
 
     public SubtaskAdapter(List<Subtask> subtasks) {
         this.subtasks = subtasks;
@@ -32,8 +29,8 @@ public class SubtaskAdapter extends RecyclerView.Adapter<SubtaskAdapter.ViewHold
         this.editListener = editListener;
     }
 
-    public void setDeleteListener(DeleteListener deleteListener) {
-        this.deleteListener = deleteListener;
+    public List<Subtask> getSubtasks() {
+        return subtasks;
     }
 
     @NonNull
@@ -50,16 +47,10 @@ public class SubtaskAdapter extends RecyclerView.Adapter<SubtaskAdapter.ViewHold
         final Subtask subtask = this.subtasks.get(position);
 
         holder.titleTxt.setText(subtask.getText());
-        holder.deleteImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (deleteListener != null) deleteListener.onImageTrashClick(subtask);
-            }
-        });
         holder.editImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (editListener != null) editListener.onImageClick(subtask);
+                if (editListener != null) editListener.onEdit(subtask);
             }
         });
     }
@@ -69,26 +60,24 @@ public class SubtaskAdapter extends RecyclerView.Adapter<SubtaskAdapter.ViewHold
         return this.subtasks.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends TodoViewHolder {
 
         @BindView(R.id.title)
         TextView titleTxt;
         @BindView(R.id.img_edit)
         ImageView editImg;
-        @BindView(R.id.img_delete)
-        ImageView deleteImg;
+        @BindView(R.id.card_view)
+        public View card_view;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            super.card_view = card_view;
         }
     }
 
     public interface EditListener {
-        void onImageClick(Subtask subtask);
-    }
-
-    public interface DeleteListener {
-        void onImageTrashClick(Subtask subtask);
+        void onEdit(Subtask subtask);
     }
 }

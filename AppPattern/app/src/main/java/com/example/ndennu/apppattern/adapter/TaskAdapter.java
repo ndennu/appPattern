@@ -21,7 +21,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     private List<Task> taskList;
     private Listener listener;
     private EditListener editListener;
-    private DeleteListener deleteListener;
 
     public TaskAdapter(List<Task> taskList) {
         this.taskList = taskList;
@@ -35,8 +34,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         this.editListener = editListener;
     }
 
-    public void setDeleteListener(DeleteListener deleteListener) {
-        this.deleteListener = deleteListener;
+    public List<Task> getTaskList() {
+        return taskList;
     }
 
     @NonNull
@@ -55,24 +54,17 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
         holder.titleTxt.setText(t.getText());
 
-        holder.deleteImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (deleteListener != null) deleteListener.onImageTrashClick(t);
-            }
-        });
-
         holder.editImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (editListener != null) editListener.onImageClick(t);
+                if (editListener != null) editListener.onEdit(t);
             }
         });
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (listener != null) listener.onGenreClick(t);
+                if (listener != null) listener.onClick(t);
             }
         });
     }
@@ -82,32 +74,30 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         return taskList.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends TodoViewHolder {
 
         @BindView(R.id.title)
         TextView titleTxt;
         @BindView(R.id.img_edit)
         ImageView editImg;
-        @BindView(R.id.img_delete)
-        ImageView deleteImg;
         @BindView(R.id.number_task)
         TextView nbTaskTxt;
+        @BindView(R.id.card_view)
+        public View card_view;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            super.card_view = card_view;
         }
     }
 
     public interface Listener {
-        void onGenreClick(Task task);
+        void onClick(Task task);
     }
 
     public interface EditListener {
-        void onImageClick(Task task);
-    }
-
-    public interface DeleteListener {
-        void onImageTrashClick(Task task);
+        void onEdit(Task task);
     }
 }
